@@ -39,7 +39,7 @@ Link para acompanhar em tempo real:
 
 - Cluster com 3 replicas de um container zookeeper;
 - Cluster com 3 replicas de um container kafka;
-- Armazenamento persistente de dados e logs fora dos containers de zookeeper e kafka;
+- Armazenamento persistente de dados, configurações e logs fora dos containers de zookeeper e kafka;
 - Um container com uma imagem de kafka como client e ferramentas necessárias para desenvolvimento do producer e consumer;
 - Um container com prometheus para coletar as métricas e grafana para monitoração;
 - Tudo orquestrado por um docker-compose que iniciará os serviços;
