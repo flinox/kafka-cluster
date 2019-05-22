@@ -1,12 +1,9 @@
 #!/bin/sh
-#export IP=$(ip route | awk '/link/ { print $7 }')
-#export IP_HOST=$(ip route | awk '/default/ { print $3 }')
 pid=0
 
 # SIGTERM-handler
 term_handler() {
   if [ $pid -ne 0 ]; then
-    #kill -SIGTERM "$pid"
     echo ""
     echo ">>> Shutting down kafka $ID ..."
     bin/kafka-server-stop.sh ${KAFKA_CONFIG:1} & 
@@ -36,8 +33,6 @@ pid="$!"
 
 trap 'term_handler' SIGHUP SIGINT SIGTERM
 
-sleep 10
-#tail -f /dev/null
+sleep 5
 
-#tail -f ${KAFKA_LOG}/server.log & wait
 tail -f ${KAFKA_LOG}/kafkaServer.out & wait

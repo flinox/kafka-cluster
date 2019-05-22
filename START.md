@@ -4,12 +4,34 @@
 - Docker installed - https://docs.docker.com/v17.12/install
 
 
-# Build image zookeeper
+# Build images zookeeper
+
+## Zookeeper
 ```
 docker build -t flinox/zookeeper ./zookeeper/.
 ```
 
-# Executar um container individualmente
+## Kafka
+```
+docker build -t flinox/kafka ./kafka/.
+```
+
+
+
+# Para inicializar o cluster
+
+```
+./start_cluster.sh
+```
+
+
+
+------------
+## Código de apoio (temporario)
+
+# Execucao individual
+
+## Zookeeper
 ```
 export ID=1
 docker run --rm \
@@ -24,8 +46,18 @@ flinox/zookeeper
 
 - Informe o ID para identificacao unica do nó do cluster
 
-# Para subir o cluster rode
+## Kafka
 
 ```
-./start_cluster.sh
+export ID=1
+
+docker run --rm \
+--name kafka${ID} --hostname kafka${ID} \
+--network bridge \
+-u 1000:1000 -e ID=${ID} \
+-v $(pwd)/log/kafka${ID}/:/opt/kafka/log \
+-v $(pwd)/config/kafka${ID}:/opt/kafka/config \
+flinox/kafka
 ```
+
+- Informe o ID para identificacao unica do nó do cluster
