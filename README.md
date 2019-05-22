@@ -29,9 +29,6 @@ Link para acompanhar em tempo real:
 > [Burndown](https://docs.google.com/spreadsheets/d/1on_Sd3mgyJTbZywISEAddIVEQWIgD7vHJqxPstqXXao/edit?usp=sharing)
 
 
-[Fonte: Gráfico Burndown e Burnup na nuvem e de graça](https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up)
-
-
 ## Arquitetura proposta
 
 ### Diagrama de arquitetura
@@ -60,5 +57,14 @@ Link para acompanhar em tempo real:
 - Apache Zookeeper 3.5.5
 - Prometheus
 - Grafana 6.1.6
+- Visual Studio Code
 - Linux Mint 64bits
+
+## Referências
+
+- https://github.com/flinox/kafka_cluster
+- https://www.confluent.io/
+- https://kafka.apache.org/
+- https://zookeeper.apache.org/
+- [Gráfico Burndown e Burnup na nuvem e de graça](https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up)
 
