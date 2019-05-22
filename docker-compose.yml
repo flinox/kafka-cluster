@@ -9,7 +9,8 @@ services:
   zookeeper1:
     #build: ./zookeeper/
     image: flinox/zookeeper_cluster
-    user: "1000:1000"
+    #user: "1000:1000"
+    user: ${CURRENT_UID}
     hostname: zookeeper1
     container_name: zookeeper1      
     networks:

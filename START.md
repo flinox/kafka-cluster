@@ -24,3 +24,6 @@ flinox/zookeeper
 
 - Informe o ID para identificacao unica do nó do cluster
 
+
+
+CURRENT_UID=$(id -u):$(id -g) docker-compose up
