@@ -13,11 +13,13 @@ ENV ZOOKEEPER_HOME=${ZKH} \
     ZOOCFG=${ZKH}${ZKC} \
     PATH=${PATH}:${ZKH}/bin \
     CLASSPATH=${ZKH}-${ZKV}/lib:${ZKH}-${ZKV}:/usr/lib/jvm/java-1.8-openjdk/jre \
-    USER=zookeeper 
+    USER=zookeeper \
+    UID=1000 \
+    GID=1000
 
 
-RUN addgroup -S -g 1000 ${USER} \ 
-     && adduser -S -u 1000 -G ${USER} -s /bin/sh ${USER} -D --gecos "" \
+RUN addgroup -S -g ${UID} ${USER} \ 
+     && adduser -S -u ${GID} -G ${USER} -s /bin/sh ${USER} -D --gecos "" \
        --home ${ZOOKEEPER_HOME} \
        --ingroup ${USER} \
        --no-create-home \
@@ -46,12 +48,12 @@ WORKDIR ${ZOOKEEPER_HOME}
 COPY ./conf/* ${ZOOKEEPER_HOME}/conf/
 COPY start.sh ${ZOOKEEPER_HOME}/
 
-RUN chown ${USER}:${USER} ${ZOOKEEPER_DATA} \
-    && chown ${USER}:${USER} -R ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} \
-    && chown -h ${USER}:${USER} ${ZOOKEEPER_HOME} \
-    && chown ${USER}:${USER} -R ${ZOO_LOG_DIR} 
+RUN chown ${UID}:${GID} ${ZOOKEEPER_DATA} \
+    && chown ${UID}:${GID} -R ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} \
+    && chown -h ${UID}:${GID} ${ZOOKEEPER_HOME} \
+    && chown ${UID}:${GID} -R ${ZOO_LOG_DIR} 
 
-USER ${USER}
+USER ${UID}
 
 EXPOSE 2181
 EXPOSE 2888-3888

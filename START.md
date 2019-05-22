@@ -15,7 +15,7 @@ export ID=1
 docker run --rm \
 --name zookeeper${ID} --hostname zookeeper${ID} \
 --network bridge \
--u zookeeper -e ID=${ID} \
+-u 1000:1000 -e ID=${ID} \
 -v $(pwd)/zookeeper/data/zookeeper${ID}/:/data/zookeeper \
 -v $(pwd)/zookeeper/log/zookeeper${ID}/:/opt/zookeeper/log \
 -v $(pwd)/zookeeper/conf/:/opt/zookeeper/conf \
