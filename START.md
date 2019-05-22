@@ -24,6 +24,8 @@ flinox/zookeeper
 
 - Informe o ID para identificacao unica do nó do cluster
 
+# Para subir o cluster rode
 
-
-CURRENT_UID=$(id -u):$(id -g) docker-compose up
+```
+./start_cluster.sh
+```

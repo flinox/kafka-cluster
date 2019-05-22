@@ -9,7 +9,6 @@ services:
   zookeeper1:
     #build: ./zookeeper/
     image: flinox/zookeeper_cluster
-    #user: "1000:1000"
     user: ${CURRENT_UID}
     hostname: zookeeper1
     container_name: zookeeper1      
@@ -28,7 +27,7 @@ services:
   zookeeper2:
     #build: ./zookeeper/    
     image: flinox/zookeeper_cluster
-    user: "1000:1000"
+    user: ${CURRENT_UID}
     hostname: zookeeper2
     container_name: zookeeper2
     networks:
@@ -48,7 +47,7 @@ services:
   zookeeper3:
     #build: ./zookeeper/    
     image: flinox/zookeeper_cluster
-    user: "1000:1000"
+    user: ${CURRENT_UID}
     hostname: zookeeper3
     container_name: zookeeper3
     networks:
@@ -70,7 +69,7 @@ services:
   kafka1:
     #build: ./kafka/    
     image: flinox/kafka_cluster
-    user: "1000:1000"    
+    user: ${CURRENT_UID}    
     hostname: kafka1
     container_name: kafka1
     networks:
@@ -90,7 +89,7 @@ services:
   kafka2:
     #build: ./kafka/        
     image: flinox/kafka_cluster
-    user: "1000:1000"    
+    user: ${CURRENT_UID}    
     hostname: kafka2
     container_name: kafka2
     networks:
@@ -111,7 +110,7 @@ services:
   kafka3:
     #build: ./kafka/        
     image: flinox/kafka_cluster
-    user: "1000:1000"    
+    user: ${CURRENT_UID}    
     hostname: kafka3
     container_name: kafka3
     networks:

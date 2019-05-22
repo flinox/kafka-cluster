@@ -25,23 +25,15 @@ RUN addgroup -S -g ${UID} ${USER} \
        --no-create-home \
      && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# RUN addgroup --gid ${USER} ${USER} \
-#     && adduser --disabled-password --gecos "" \
-#        --home ${ZOOKEEPER_HOME} \
-#        --ingroup ${USER} \
-#        --no-create-home \
-#        --uid ${UID} ${USER} && \
-#        echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-RUN apk add --no-cache bash curl jq nano sudo openrc \
+RUN apk add --no-cache bash curl jq nano sudo openrc acl \
     && cd /tmp && wget http://ftp.unicamp.br/pub/apache/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
 
 RUN tar xfz /tmp/zookeeper-${ZOOKEEPER_VERSION}.tar.gz -C /opt \
     && rm /tmp/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
 
 RUN ln -s ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} ${ZOOKEEPER_HOME} \
-    && mkdir ${ZOOKEEPER_DATA} -p \
-    && mkdir ${ZOO_LOG_DIR}
+    && mkdir -p ${ZOOKEEPER_DATA} \
+    && mkdir -p ${ZOO_LOG_DIR}
 
 WORKDIR ${ZOOKEEPER_HOME}
 
@@ -59,20 +51,3 @@ EXPOSE 2181
 EXPOSE 2888-3888
 
 CMD sh -c "./start.sh"
-
-# Gerar imagem
-#############################################################
-# docker build -t flinox/zookeeper .
-
-# Rodar o container interativo
-#############################################################
-# export ID=1
-# docker run --rm \
-# --name zookeeper${ID} --hostname zookeeper${ID} \
-# --network bridge \
-# -u 1000:1000 -e ID=${ID} \
-# -v $(pwd)/zookeeper/data/zookeeper${ID}/:/data/zookeeper \
-# -v $(pwd)/zookeeper/log/zookeeper${ID}/:/opt/zookeeper/log \
-# -v $(pwd)/zookeeper/conf/:/opt/zookeeper/conf \
-# flinox/zookeeper
-
