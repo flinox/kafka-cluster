@@ -4,12 +4,17 @@
 
 ## Planejamento
 
+### Stories
 - Classifiquei os itens do case como stories, os priorizei de acordo com suas dependências e estimei esforço com planning poker usando fibonacci:
 
 ![Stories](/plano/images/2019-05-21-stories.png)
 
 - (*) são stories desejadas/diferenciais.
 - O esforço foi estimado apenas para as stories principais do sprint, caso sobre tempo puxarei outras stories (*) para não comprometer a entrega.
+
+### Stories tasks
+![Tasks](/plano/images/2019-05-22-stories-tasks.png)
+
 
 ## Acompanhamento
 
@@ -29,6 +34,7 @@ Link para acompanhar em tempo real:
 
 ## Arquitetura proposta
 
+### Diagrama de arquitetura
 ![Diagrama de Arquitetura](/plano/images/2019-05-21-diagrama-arquitetura.png)
 
 - Cluster com 3 replicas de um container zookeeper;
@@ -39,6 +45,10 @@ Link para acompanhar em tempo real:
 - Tudo orquestrado por um docker-compose que iniciará os serviços;
 - Rodando em notebook pessoal com Linux Mint 64bits.
 
+### Diagrama de implementação
+![Diagrama de Implementacao](/plano/images/2019-05-22-diagrama-implementacao.png)
+
+- Itens em azul são containers
 
 ## Tecnologias
 
@@ -52,4 +62,3 @@ Link para acompanhar em tempo real:
 - Grafana 6.1.6
 - Linux Mint 64bits
 
-## Referencias
