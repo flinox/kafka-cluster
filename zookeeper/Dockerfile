@@ -13,17 +13,23 @@ ENV ZOOKEEPER_HOME=${ZKH} \
     ZOOCFG=${ZKH}${ZKC} \
     PATH=${PATH}:${ZKH}/bin \
     CLASSPATH=${ZKH}-${ZKV}/lib:${ZKH}-${ZKV}:/usr/lib/jvm/java-1.8-openjdk/jre \
-    USER=zookeeper \
-    UID=1000 \
-    GID=1000 
+    USER=zookeeper 
 
-RUN addgroup --gid ${GID} ${USER} \
-    && adduser --disabled-password --gecos "" \
+
+RUN addgroup -S -g 1000 ${USER} \ 
+     && adduser -S -u 1000 -G ${USER} -s /bin/sh ${USER} -D --gecos "" \
        --home ${ZOOKEEPER_HOME} \
        --ingroup ${USER} \
        --no-create-home \
-       --uid ${UID} ${USER} && \
-       echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+     && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# RUN addgroup --gid ${USER} ${USER} \
+#     && adduser --disabled-password --gecos "" \
+#        --home ${ZOOKEEPER_HOME} \
+#        --ingroup ${USER} \
+#        --no-create-home \
+#        --uid ${UID} ${USER} && \
+#        echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 RUN apk add --no-cache bash curl jq nano sudo openrc \
     && cd /tmp && wget http://ftp.unicamp.br/pub/apache/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
@@ -40,10 +46,10 @@ WORKDIR ${ZOOKEEPER_HOME}
 COPY ./conf/* ${ZOOKEEPER_HOME}/conf/
 COPY start.sh ${ZOOKEEPER_HOME}/
 
-RUN chown ${USER}:${GID} ${ZOOKEEPER_DATA} \
-    && chown ${USER}:${GID} -R ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} \
-    && chown -h ${USER}:${GID} ${ZOOKEEPER_HOME} \
-    && chown ${USER}:${GID} -R ${ZOO_LOG_DIR} 
+RUN chown ${USER}:${USER} ${ZOOKEEPER_DATA} \
+    && chown ${USER}:${USER} -R ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} \
+    && chown -h ${USER}:${USER} ${ZOOKEEPER_HOME} \
+    && chown ${USER}:${USER} -R ${ZOO_LOG_DIR} 
 
 USER ${USER}
 

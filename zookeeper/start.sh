@@ -15,6 +15,12 @@ term_handler() {
 echo ">>> Configurando $ZOOCFG..."
 qtde_found=$(cat $ZOOCFG | grep -c "server.$ID")
 
+mkdir -p .$ZOOKEEPER_DATA/zookeeper${vID}
+mkdir -p .$ZOO_LOG_DIR/zookeeper${vID}
+
+chown zookeeper .$ZOOKEEPER_DATA/zookeeper${vID} -R
+chown zookeeper .$ZOO_LOG_DIR/zookeeper${vID} -R
+
 if [ $qtde_found -eq 0 ]; then
    #string not contained in file
    echo "server.$ID=$(ip route | awk '/link/ { print $7 }'):2888:3888" >> $ZOOCFG
