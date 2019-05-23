@@ -17,15 +17,15 @@ qtde_found=$(cat $ZOOCFG | grep -c "server.$ID")
 
 if [ $qtde_found -eq 0 ]; then
    #string not contained in file
-   echo "server.$ID=$(ip route | awk '/link/ { print $7 }'):2888:3888" >> $ZOOCFG
+   #echo "server.$ID=$(ip route | awk '/link/ { print $7 }'):2888:3888" >> $ZOOCFG
    echo "$ID" > $ZOOKEEPER_DATA/myid
 else
    #string is in file at least once
-   sed -i "s/server.$ID=zookeeper$ID/server.$ID=$(ip route | awk '/link/ { print $7 }')/g" $ZOOCFG
+   #sed -i "s/server.$ID=zookeeper$ID/server.$ID=$(ip route | awk '/link/ { print $7 }')/g" $ZOOCFG
    echo "$ID" > $ZOOKEEPER_DATA/myid   
 fi
 
-sleep 2
+sleep 5
 echo ">>> Starting zookeeper $ID ..."
 bin/zkServer.sh start $ZOOCFG & 
 pid="$!"

@@ -26,7 +26,7 @@ else
    sed -i -E "s/(broker.id=)[0-9]{1,}/broker.id=$ID/g" ${KAFKA_CONFIG:1}
 fi
 
-sleep 2
+sleep 5
 echo ">>> Starting kafka $ID ..."
 bin/kafka-server-start.sh -daemon ${KAFKA_CONFIG:1} & 
 pid="$!"

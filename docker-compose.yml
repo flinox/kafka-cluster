@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 networks:
   cluster-net:
@@ -7,8 +7,8 @@ networks:
 services:
 
   zookeeper1:
-    #build: ./zookeeper/
-    image: flinox/zookeeper_cluster
+    build: ./zookeeper/
+    image: flinox/zookeeper
     user: ${CURRENT_UID}
     hostname: zookeeper1
     container_name: zookeeper1      
@@ -17,16 +17,21 @@ services:
     volumes:
       - ./zookeeper/data/zookeeper1:/data/zookeeper
       - ./zookeeper/log/zookeeper1:/opt/zookeeper/log
-      - ./zookeeper/conf:/opt/zookeeper/conf
+      - ./zookeeper/conf/zookeeper1:/opt/zookeeper/conf
     ports:
       - "2181:2181"
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ID: 1
+    healthcheck:
+        test: ["CMD", "echo", "stat", "|", "nc", "zookeeper1", "2181"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
   
   zookeeper2:
-    #build: ./zookeeper/    
-    image: flinox/zookeeper_cluster
+    build: ./zookeeper/    
+    image: flinox/zookeeper
     user: ${CURRENT_UID}
     hostname: zookeeper2
     container_name: zookeeper2
@@ -35,18 +40,24 @@ services:
     volumes:
       - ./zookeeper/data/zookeeper2:/data/zookeeper
       - ./zookeeper/log/zookeeper2:/opt/zookeeper/log
-      - ./zookeeper/conf:/opt/zookeeper/conf      
+      - ./zookeeper/conf/zookeeper2:/opt/zookeeper/conf      
     ports:
       - "2182:2181"
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ID: 2     
+    healthcheck:
+        test: ["CMD", "echo", "stat", "|", "nc", "zookeeper2", "2181"]
+        interval: 30s
+        timeout: 10s
+        retries: 5      
     depends_on:
-      - zookeeper1
+      zookeeper1:
+        condition: service_healthy
 
   zookeeper3:
-    #build: ./zookeeper/    
-    image: flinox/zookeeper_cluster
+    build: ./zookeeper/    
+    image: flinox/zookeeper
     user: ${CURRENT_UID}
     hostname: zookeeper3
     container_name: zookeeper3
@@ -55,20 +66,26 @@ services:
     volumes:
       - ./zookeeper/data/zookeeper3:/data/zookeeper
       - ./zookeeper/log/zookeeper3:/opt/zookeeper/log
-      - ./zookeeper/conf:/opt/zookeeper/conf      
+      - ./zookeeper/conf/zookeeper3:/opt/zookeeper/conf      
     ports:
       - "2183:2181"
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
-      ID: 3      
+      ID: 3   
+    healthcheck:
+        test: ["CMD", "echo", "stat", "|", "nc", "zookeeper3", "2181"]
+        interval: 30s
+        timeout: 10s
+        retries: 5         
     depends_on:
-      - zookeeper1
-      - zookeeper2      
-
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy
 
   kafka1:
-    #build: ./kafka/    
-    image: flinox/kafka_cluster
+    build: ./kafka/    
+    image: flinox/kafka
     user: ${CURRENT_UID}    
     hostname: kafka1
     container_name: kafka1
@@ -83,12 +100,16 @@ services:
       ID: 1
       ALLOW_PLAINTEXT_LISTENER: "yes"
     depends_on:
-      - zookeeper1
-      - zookeeper2
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy  
+      zookeeper3:
+        condition: service_healthy
 
   kafka2:
-    #build: ./kafka/        
-    image: flinox/kafka_cluster
+    build: ./kafka/        
+    image: flinox/kafka
     user: ${CURRENT_UID}    
     hostname: kafka2
     container_name: kafka2
@@ -103,13 +124,18 @@ services:
       ID: 2
       ALLOW_PLAINTEXT_LISTENER: "yes"   
     depends_on:
-      - zookeeper1
-      - zookeeper2
-      - kafka1        
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy  
+      zookeeper3:
+        condition: service_healthy   
+      kafka1:
+        condition: service_healthy
 
   kafka3:
-    #build: ./kafka/        
-    image: flinox/kafka_cluster
+    build: ./kafka/        
+    image: flinox/kafka
     user: ${CURRENT_UID}    
     hostname: kafka3
     container_name: kafka3
@@ -153,24 +179,27 @@ services:
       # #HOSTNAME_COMMAND: "wget -t3 -T2 -qO-  http://169.254.169.254/latest/meta-data/local-ipv4"
       # #Reference: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
     depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3     
-      - kafka1
-      - kafka2             
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy  
+      zookeeper3:
+        condition: service_healthy   
+      kafka1:
+        condition: service_healthy        
+      kafka2:
+        condition: service_healthy
 
   kafka_client:
-    image: flinox/flinox:v2
+    build: ./kafka_client/
+    image: flinox/kafka_client
     hostname: kafka_client
     container_name: kafka_client  
     networks:
       - cluster-net
     stdin_open: true
     tty: true
-    # environment:
-    #   TERM: "xterm"
     command: /bin/bash -c "sleep infinity"
-    depends_on:
-      - kafka3
+
 
 

@@ -16,13 +16,25 @@ docker build -t flinox/zookeeper ./zookeeper/.
 docker build -t flinox/kafka ./kafka/.
 ```
 
+## Kafka Client
+```
+docker build -t flinox/kafka_client ./kafka_client/.
+```
 
+## Rebuild all images
 
-# Para inicializar o cluster
+```
+docker build -t flinox/zookeeper ./zookeeper/.
+docker build -t flinox/kafka ./kafka/.
+docker build -t flinox/kafka_client ./kafka_client/.
+```
+
+# Inicializar o cluster
 
 ```
 ./start_cluster.sh
 ```
+
 
 
 
