@@ -22,7 +22,6 @@ RUN apt-get update && apt-get install -y kubectl kafkacat confluent-platform-oss
 
 RUN wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz -P /tmp/ && tar -C /usr/local -xzf /tmp/go1.12.5.linux-amd64.tar.gz && go version
 
-
 WORKDIR /go
 
 

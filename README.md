@@ -55,7 +55,8 @@ Link para acompanhar em tempo real:
 - Docker-compose 1.17.1
 - Apache Kafka 2.2.0
 - Apache Zookeeper 3.5.5
-- Prometheus
+- Prometheus JMX Expoeter Agent 0.11.0
+- Prometheus 2.9.2
 - Grafana 6.1.6
 - Visual Studio Code
 - Linux Mint 64bits

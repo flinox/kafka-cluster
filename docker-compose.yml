@@ -6,6 +6,7 @@ networks:
 
 services:
 
+  
   zookeeper1:
     build: ./zookeeper/
     image: flinox/zookeeper
@@ -26,9 +27,10 @@ services:
     healthcheck:
         test: ["CMD", "echo", "stat", "|", "nc", "zookeeper1", "2181"]
         interval: 30s
-        timeout: 10s
+        timeout: 20s
         retries: 5
   
+
   zookeeper2:
     build: ./zookeeper/    
     image: flinox/zookeeper
@@ -49,11 +51,12 @@ services:
     healthcheck:
         test: ["CMD", "echo", "stat", "|", "nc", "zookeeper2", "2181"]
         interval: 30s
-        timeout: 10s
+        timeout: 20s
         retries: 5      
     depends_on:
       zookeeper1:
         condition: service_healthy
+
 
   zookeeper3:
     build: ./zookeeper/    
@@ -75,13 +78,14 @@ services:
     healthcheck:
         test: ["CMD", "echo", "stat", "|", "nc", "zookeeper3", "2181"]
         interval: 30s
-        timeout: 10s
+        timeout: 20s
         retries: 5         
     depends_on:
       zookeeper1:
         condition: service_healthy
       zookeeper2:
         condition: service_healthy
+
 
   kafka1:
     build: ./kafka/    
@@ -96,14 +100,16 @@ services:
       - ./kafka/config/kafka1:/opt/kafka/config
     ports:
       - "9092:9092"
+      - "8082:8080"
     environment:
       ID: 1
       ALLOW_PLAINTEXT_LISTENER: "yes"
-      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"      
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
     healthcheck:
         test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka1:9092"]
         interval: 60s
-        timeout: 10s
+        timeout: 20s
         retries: 5        
     depends_on:
       zookeeper1:
@@ -112,6 +118,7 @@ services:
         condition: service_healthy  
       zookeeper3:
         condition: service_healthy
+
 
   kafka2:
     build: ./kafka/        
@@ -126,14 +133,16 @@ services:
       - ./kafka/config/kafka2:/opt/kafka/config
     ports:
       - "9093:9092"
+      - "8083:8080"      
     environment:
       ID: 2
       ALLOW_PLAINTEXT_LISTENER: "yes" 
-      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"      
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
     healthcheck:
         test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka2:9092"]
         interval: 60s
-        timeout: 10s
+        timeout: 20s
         retries: 5                
     depends_on:
       zookeeper1:
@@ -144,6 +153,7 @@ services:
         condition: service_healthy   
       kafka1:
         condition: service_healthy
+
 
   kafka3:
     build: ./kafka/        
@@ -158,10 +168,12 @@ services:
       - ./kafka/config/kafka3:/opt/kafka/config
     ports:
       - "9094:9092"
+      - "8084:8080"      
     environment:
       ID: 3
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
       # KAFKA_ADVERTISED_HOST_NAME: 172.20.1.38
       # LOG4J_LOGGER_KAFKA: "INFO"
       # LOG4J_LOGGER_ORG_APACHE_KAFKA: "INFO"
@@ -194,7 +206,7 @@ services:
     healthcheck:
         test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka3:9092"]
         interval: 60s
-        timeout: 10s
+        timeout: 20s
         retries: 5            
     depends_on:
       zookeeper1:
@@ -208,6 +220,7 @@ services:
       kafka2:
         condition: service_healthy
 
+
   kafka_client:
     build: ./kafka_client/
     image: flinox/kafka_client
@@ -219,5 +232,20 @@ services:
     tty: true
     command: /bin/bash -c "sleep infinity"
 
+
+  kafka_monitoring:
+    build: ./kafka_monitoring/
+    image: flinox/kafka_monitoring
+    hostname: kafka_monitoring
+    container_name: kafka_monitoring
+    networks:
+      - cluster-net
+    volumes:
+      - ./kafka_monitoring/prometheus/:/opt/prometheus/config
+    ports:
+      - "9090:9090"
+    stdin_open: true
+    tty: true
+    command: /bin/bash -c "./prometheus --config.file ../config/prometheus.yml"    
 
 

@@ -23,12 +23,19 @@ docker build -t flinox/kafka ./kafka/.
 docker build -t flinox/kafka_client ./kafka_client/.
 ```
 
+## Kafka Monitoring ( Prometheus e Grafana )
+```
+docker build -t flinox/kafka_monitoring ./kafka_monitoring/.
+```
+
+
 ## Rebuild all images
 
 ```
 docker build -t flinox/zookeeper ./zookeeper/.
 docker build -t flinox/kafka ./kafka/.
 docker build -t flinox/kafka_client ./kafka_client/.
+docker build -t flinox/kafka_monitoring ./monitoring/.
 ```
 
 # Inicializar o cluster
