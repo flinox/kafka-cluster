@@ -6,7 +6,7 @@ networks:
 
 services:
 
-  
+
   zookeeper1:
     build: ./zookeeper/
     image: flinox/zookeeper
@@ -247,5 +247,17 @@ services:
     stdin_open: true
     tty: true
     command: /bin/bash -c "./prometheus --config.file ../config/prometheus.yml"    
-
+    depends_on:
+      zookeeper1:
+        condition: service_started
+      zookeeper2:
+        condition: service_started  
+      zookeeper3:
+        condition: service_started   
+      kafka1:
+        condition: service_started        
+      kafka2:
+        condition: service_started    
+      kafka3:
+        condition: service_started
 
