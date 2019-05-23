@@ -4,9 +4,11 @@
 - Docker installed - https://docs.docker.com/v17.12/install
 
 
-# Build images zookeeper
 
-## Zookeeper
+# Docker images
+
+## Zookeeper image
+
 ```
 docker build -t flinox/zookeeper ./zookeeper/.
 ```

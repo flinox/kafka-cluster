@@ -67,4 +67,6 @@ Link para acompanhar em tempo real:
 - https://kafka.apache.org/
 - https://zookeeper.apache.org/
 - [Gráfico Burndown e Burnup na nuvem e de graça](https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up)
-
+- https://courses.datacumulus.com/kafka-monitoring-b88
+- https://github.com/prometheus/jmx_exporter
+- https://github.com/prometheus/prometheus

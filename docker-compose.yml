@@ -99,6 +99,7 @@ services:
     environment:
       ID: 1
       ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"      
     healthcheck:
         test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka1:9092"]
         interval: 60s
@@ -128,6 +129,7 @@ services:
     environment:
       ID: 2
       ALLOW_PLAINTEXT_LISTENER: "yes" 
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"      
     healthcheck:
         test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka2:9092"]
         interval: 60s
@@ -159,6 +161,7 @@ services:
     environment:
       ID: 3
       ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       # KAFKA_ADVERTISED_HOST_NAME: 172.20.1.38
       # LOG4J_LOGGER_KAFKA: "INFO"
       # LOG4J_LOGGER_ORG_APACHE_KAFKA: "INFO"
