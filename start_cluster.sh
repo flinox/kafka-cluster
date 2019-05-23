@@ -13,5 +13,6 @@
 [ -d ./kafka/log/kafka3 ] || mkdir -p ./kafka/log/kafka3
 
 export CURRENT_UID=$(id -u):$(id -g)
+export COMPOSE_HTTP_TIMEOUT=200
 
 docker-compose up
