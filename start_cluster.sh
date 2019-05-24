@@ -16,6 +16,32 @@
 [ -d ./kafka_monitoring/prometheus/data ] || mkdir -p ./kafka_monitoring/prometheus/data
 [ -d ./kafka_monitoring/grafana/data ] || mkdir -p ./kafka_monitoring/grafana/data
 
+# Create files if not exist
+[ -f ./kafka/log/kafka1/server.log ] || touch ./kafka/log/kafka1/server.log
+[ -f ./kafka/log/kafka2/server.log ] || touch ./kafka/log/kafka2/server.log
+[ -f ./kafka/log/kafka3/server.log ] || touch ./kafka/log/kafka3/server.log
+
+[ -f ./kafka/log/kafka1/state-change.log ] || touch ./kafka/log/kafka1/state-change.log
+[ -f ./kafka/log/kafka2/state-change.log ] || touch ./kafka/log/kafka2/state-change.log
+[ -f ./kafka/log/kafka3/state-change.log ] || touch ./kafka/log/kafka3/state-change.log
+
+[ -f ./kafka/log/kafka1/kafka-request.log ] || touch ./kafka/log/kafka1/kafka-request.log
+[ -f ./kafka/log/kafka2/kafka-request.log ] || touch ./kafka/log/kafka2/kafka-request.log
+[ -f ./kafka/log/kafka3/kafka-request.log ] || touch ./kafka/log/kafka3/kafka-request.log
+
+[ -f ./kafka/log/kafka1/log-cleaner.log ] || touch ./kafka/log/kafka1/log-cleaner.log
+[ -f ./kafka/log/kafka2/log-cleaner.log ] || touch ./kafka/log/kafka2/log-cleaner.log
+[ -f ./kafka/log/kafka3/log-cleaner.log ] || touch ./kafka/log/kafka3/log-cleaner.log
+
+[ -f ./kafka/log/kafka1/controller.log ] || touch ./kafka/log/kafka1/controller.log
+[ -f ./kafka/log/kafka2/controller.log ] || touch ./kafka/log/kafka2/controller.log
+[ -f ./kafka/log/kafka3/controller.log ] || touch ./kafka/log/kafka3/controller.log
+
+[ -f ./kafka/log/kafka1/kafka-authorizer.log ] || touch ./kafka/log/kafka1/kafka-authorizer.log
+[ -f ./kafka/log/kafka2/kafka-authorizer.log ] || touch ./kafka/log/kafka2/kafka-authorizer.log
+[ -f ./kafka/log/kafka3/kafka-authorizer.log ] || touch ./kafka/log/kafka3/kafka-authorizer.log
+
+
 # Build changes if necessary
 docker build -t flinox/zookeeper ./zookeeper/.
 docker build -t flinox/kafka ./kafka/.

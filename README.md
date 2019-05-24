@@ -235,3 +235,6 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 - https://github.com/prometheus/prometheus
 - https://grafana.com/
 - https://www.udemy.com/user/stephane-maarek/
+
+
+- https://medium.com/rahasak/kafka-producer-with-golang-fab7348a5f9a

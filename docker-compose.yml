@@ -267,9 +267,15 @@ services:
     build: ./kafka_client/
     image: flinox/kafka_client
     hostname: kafka_client
-    container_name: kafka_client  
+    container_name: kafka_client
     networks:
       - cluster-net
+    volumes:
+      - ./kafka_client/app_consumer/:/go/src/app_consumer
+      - ./kafka_client/app_producer/:/go/src/app_producer      
+    environment: 
+      KAFKA_HOST: "kafka1:9092,kafka2:9093,kafka3:9094"
+      KAFKA_TOPIC: "test-topic"
     stdin_open: true
     tty: true
     command: /bin/bash -c "sleep infinity"        
