@@ -83,16 +83,57 @@ Todos os dados, logs e configurações estão persistentes e fora dos containers
 ### Locais do armazenamento persistente
 
 
-> Kafka
+### Kafka
 
-  - Dados
-    - 
-  - ./kafka/log/kafka<node_id>
-  - ./kafka/log/kafka<node_id>/log
+- Config
 
-- Zookeeper
-  - ./zookeeper/data/zookeeper<node_id>
-  - ./zookeeper/log/zookeeper<node_id>
+    ```./kafka/config/kafka<node_id>/```
+
+- Dados
+  
+    ```./kafka/log/kafka<node_id>/log/```
+
+- Log
+  
+    ```./kafka/log/kafka<node_id>/```
+
+
+### Zookeeper
+
+- Config
+
+    ```./zookeeper/conf/zookeeper<node_id>/```
+
+- Dados
+
+    ```./zookeeper/data/zookeeper<node_id>/```
+
+- Log
+
+    ```./zookeeper/log/zookeeper<node_id>/```
+
+
+### Prometheus
+
+- Config
+
+    ```./kafka_monitoring/prometheus/config/```
+
+- Dados
+
+    ```./kafka_monitoring/prometheus/data/```
+
+
+### Grafana
+
+- Config
+
+    ```./kafka_monitoring/grafana/conf/```
+
+- Dados
+
+    ```./kafka_monitoring/grafana/data/```
+
   
 >## Monitoração
 
