@@ -233,3 +233,5 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 - https://courses.datacumulus.com/kafka-monitoring-b88
 - https://github.com/prometheus/jmx_exporter
 - https://github.com/prometheus/prometheus
+- https://grafana.com/
+- https://www.udemy.com/user/stephane-maarek/
