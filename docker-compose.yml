@@ -227,18 +227,6 @@ services:
         condition: service_started
 
 
-  kafka_client:
-    build: ./kafka_client/
-    image: flinox/kafka_client
-    hostname: kafka_client
-    container_name: kafka_client  
-    networks:
-      - cluster-net
-    stdin_open: true
-    tty: true
-    command: /bin/bash -c "sleep infinity"
-
-
   kafka_monitoring:
     build: ./kafka_monitoring/
     image: flinox/kafka_monitoring
@@ -247,13 +235,15 @@ services:
     networks:
       - cluster-net
     volumes:
-      - ./kafka_monitoring/prometheus/:/opt/prometheus/config
+      - ./kafka_monitoring/prometheus/config/:/opt/prometheus/config
+      - ./kafka_monitoring/prometheus/data/:/opt/prometheus/data
+      - ./kafka_monitoring/grafana/conf/:/opt/grafana/conf
+      - ./kafka_monitoring/grafana/data/:/opt/grafana/data      
     ports:
       - "9090:9090"
       - "3000:3000"
     stdin_open: true
     tty: true
-    #command: /bin/bash -c "./prometheus --config.file=../config/prometheus.yml"    
     depends_on:
       zookeeper1:
         condition: service_started
@@ -268,3 +258,14 @@ services:
       kafka3:
         condition: service_started
 
+
+  kafka_client:
+    build: ./kafka_client/
+    image: flinox/kafka_client
+    hostname: kafka_client
+    container_name: kafka_client  
+    networks:
+      - cluster-net
+    stdin_open: true
+    tty: true
+    command: /bin/bash -c "sleep infinity"        

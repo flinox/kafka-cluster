@@ -1,5 +1,7 @@
 kafka/log/*
 zookeeper/data/*
 zookeeper/log/*
+kafka_monitoring/grafana/data/*
+kafka_monitoring/prometheus/data/*
 
 

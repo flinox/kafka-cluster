@@ -61,6 +61,15 @@ Link para acompanhar em tempo real:
 - Visual Studio Code
 - Linux Mint 64bits
 
+
+## Iniciar o cluster
+
+```
+./start_cluster.sh
+```
+
+
+
 ## Referências
 
 - https://github.com/flinox/kafka_cluster
