@@ -103,6 +103,7 @@ services:
       - cluster-net
     volumes:
       - ./kafka/log/kafka1:/opt/kafka/logs
+      - ./kafka/log/kafka1/log:/opt/kafka/log      
       - ./kafka/config/kafka1:/opt/kafka/config
     ports:
       - "9092:9092"
@@ -136,6 +137,7 @@ services:
       - cluster-net
     volumes:
       - ./kafka/log/kafka2:/opt/kafka/logs
+      - ./kafka/log/kafka2/log:/opt/kafka/log      
       - ./kafka/config/kafka2:/opt/kafka/config
     ports:
       - "9093:9092"
@@ -171,6 +173,7 @@ services:
       - cluster-net
     volumes:
       - ./kafka/log/kafka3:/opt/kafka/logs
+      - ./kafka/log/kafka3/log:/opt/kafka/log      
       - ./kafka/config/kafka3:/opt/kafka/config
     ports:
       - "9094:9092"
@@ -180,6 +183,7 @@ services:
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
+      KAFKA_OFFSETS_RETENTION_MINUTES: 10080
       # KAFKA_ADVERTISED_HOST_NAME: 172.20.1.38
       # LOG4J_LOGGER_KAFKA: "INFO"
       # LOG4J_LOGGER_ORG_APACHE_KAFKA: "INFO"

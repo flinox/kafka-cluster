@@ -62,17 +62,128 @@ Link para acompanhar em tempo real:
 - Linux Mint 64bits
 
 
-## Iniciar o cluster
+# Como rodar o ambiente
+
+>## Pré-requisitos
+- [Docker 18.09.5](https://docs.docker.com/v17.12/install)
+- [Docker-Compose 1.17.1](https://docs.docker.com/compose/install)
+
+>## Iniciar o cluster
 
 ```
 ./start_cluster.sh
 ```
+- Irá realizar o build das imagens usadas no cluster;
+- Realizar a criação inicial dos diretorios de armazenamento persistente;
+- Iniciar toda a orquestração para subir o ambiente
 
 
+Todos os dados, logs e configurações estão persistentes e fora dos containers, assim se você parar um container do cluster ou o cluster todo e subir novamente todo o histórico será mantido.
+
+### Locais do armazenamento persistente
+
+
+> Kafka
+
+  - Dados
+    - 
+  - ./kafka/log/kafka<node_id>
+  - ./kafka/log/kafka<node_id>/log
+
+- Zookeeper
+  - ./zookeeper/data/zookeeper<node_id>
+  - ./zookeeper/log/zookeeper<node_id>
+  
+>## Monitoração
+
+Acompanhar logs do cluster, rode:
+
+```
+docker-compose logs -f
+```
+
+Para acompanhar log de um nó específico, rode:
+
+```
+docker-compose logs <nome_servico> -f
+```
+
+## Grafana
+
+No Grafana você consegue monitorar os principais indicadores que julga importante para acompanhar a "saúde" do kafka.
+Para acessar o grafana:
+[http://localhost:3000](http://localhost:3000)
+![Grafana](/plano/images/2019-05-24-grafana-01.png)
+
+
+## Prometheus
+É onde são armazenadas as métricas que são coletadas dos brokers, estes dados servem de base para o grafana, Acesse o prometheus através do endereço:
+[http://localhost:9090](http://localhost:9090)
+![Prometheus](/plano/images/2019-05-23-prometheus-01.png)
+
+
+
+## Apoio técnico
+
+### Caso queira realizar o build manual das imagens
+```
+docker build -t flinox/zookeeper ./zookeeper/.
+docker build -t flinox/kafka ./kafka/.
+docker build -t flinox/kafka_client ./kafka_client/.
+docker build -t flinox/kafka_monitoring ./kafka_monitoring/.
+```
+
+### Acessar kafka_client
+```
+docker exec -it kafka_client bash
+```
+
+### Listar topicos
+```
+kafka-topics --zookeeper zookeeper1:2181 --list
+```
+
+### Criar topico
+```
+kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --create --topic test-topic --partitions 3 --replication-factor 3
+```
+
+### Alterar configurações do topico
+```
+kafka-configs --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --entity-type topics --entity-name test-topic --alter --add-config 'cleanup.policy=compact'
+```
+- [Lista completa de configuracoes de tópicos](https://kafka.apache.org/documentation/#topicconfigs)
+
+
+### Consumir mensagens de um tópico
+```
+kafka-console-consumer --bootstrap-server kafka1:9092,kafka2:9093,kafka3:9094 \
+--topic test-topic \
+--timeout-ms 30000 \
+--property group.id=flinox \
+--from-beginning
+```
+- Para consumir as mensagens mais recentes apenas remover --from-beginning
+
+### Produzir mensagens em um tópico
+```
+kafka-console-producer --broker-list kafka1:9092,kafka2:9093,kafka3:9094 --topic test-topic --timeout 30000 --property "client.id=flinox"
+```
+
+### Produzir mensagens com chave em um tópico
+```
+kafka-console-producer --broker-list kafka1:9092,kafka2:9093,kafka3:9094 --topic test-topic --timeout 30000 --property "client.id=flinox" --property "parse.key=true" --property "key.separator=:"
+```
+
+### Deletar topico
+```
+kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delete --topic test-topic
+```
 
 ## Referências
 
 - https://github.com/flinox/kafka_cluster
+- https://github.com/flinox/kafka_utils
 - https://www.confluent.io/
 - https://kafka.apache.org/documentation/
 - https://docs.confluent.io/current/kafka/monitoring.html
