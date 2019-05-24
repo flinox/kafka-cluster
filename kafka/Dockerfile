@@ -2,6 +2,7 @@ FROM openjdk:8u201-jre-alpine
 
 ARG KFV=2.2.0
 ARG SCV=2.12
+ARG PRV=0.11.0
 ARG KFH=/opt/kafka
 ARG KFL=/opt/kafka/logs
 ARG KFD=/data/kafka
@@ -15,6 +16,7 @@ ENV KAFKA_HOME=${KFH} \
     KAFKA_CONFIG=${KFC} \
     SCALA_VERSION=${SCV} \
     PROMETHEUS_HOME=${PRH} \
+    PROMETHEUS_VERSION=${PRV} \     
     PATH=${PATH}:${KFH}/bin \
     CLASSPATH=${KFH}-${KFV}/lib:${KFH}-${KFV}:/usr/lib/jvm/java-1.8-openjdk/jre \
     USER=kafka \
@@ -33,7 +35,7 @@ RUN addgroup -S -g ${UID} ${USER} \
 RUN apk add --no-cache bash curl jq nano sudo \
     && cd /tmp && wget http://ftp.unicamp.br/pub/apache/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 
-# Descompact kafka
+# Extract kafka
 RUN tar xfz /tmp/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /opt \
     && rm /tmp/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 
@@ -44,7 +46,7 @@ RUN ln -s kafka_${SCALA_VERSION}-${KAFKA_VERSION} ${KAFKA_HOME} \
 
 # Download prometheus jmx export agent
 RUN mkdir -p ${PROMETHEUS_HOME} \
-    && wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.11.0/jmx_prometheus_javaagent-0.11.0.jar -P ${PROMETHEUS_HOME} \
+    && wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${PROMETHEUS_VERSION}/jmx_prometheus_javaagent-${PROMETHEUS_VERSION}.jar -P ${PROMETHEUS_HOME} \
     && wget https://raw.githubusercontent.com/prometheus/jmx_exporter/master/example_configs/kafka-2_0_0.yml -P ${PROMETHEUS_HOME}
 
 WORKDIR ${KAFKA_HOME}

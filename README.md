@@ -65,7 +65,8 @@ Link para acompanhar em tempo real:
 
 - https://github.com/flinox/kafka_cluster
 - https://www.confluent.io/
-- https://kafka.apache.org/
+- https://kafka.apache.org/documentation/
+- https://docs.confluent.io/current/kafka/monitoring.html
 - https://zookeeper.apache.org/
 - [Gráfico Burndown e Burnup na nuvem e de graça](https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up)
 - https://courses.datacumulus.com/kafka-monitoring-b88

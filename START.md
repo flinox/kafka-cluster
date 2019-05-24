@@ -60,3 +60,25 @@ flinox/kafka
 ```
 
 - Informe o ID para identificacao unica do nó do cluster
+
+
+
+# Metricas
+
+## Prometheus
+
+Para acessar o prometheus e consultar as metricas ou executar alguma consulta, acesse:
+[http://localhost:9090](http://localhost:9090)
+![Prometheus](/plano/images/2019-05-23-prometheus-01.png)
+
+## Grafana
+
+Para acessar o grafana e ter acesso ao dashboard, acesse:
+[http://localhost:3000](http://localhost:3000)
+![Grafana](/plano/images/2019-05-23-grafana-01.png)
+
+
+
+## Todas as metricas kafka para monitorar
+https://kafka.apache.org/documentation/#monitoring
+

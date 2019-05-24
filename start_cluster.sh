@@ -12,7 +12,13 @@
 [ -d ./kafka/log/kafka2 ] || mkdir -p ./kafka/log/kafka2
 [ -d ./kafka/log/kafka3 ] || mkdir -p ./kafka/log/kafka3
 
-export CURRENT_UID=$(id -u):$(id -g)
+
+docker build -t flinox/zookeeper ./zookeeper/.
+docker build -t flinox/kafka ./kafka/.
+docker build -t flinox/kafka_client ./kafka_client/.
+docker build -t flinox/kafka_monitoring ./kafka_monitoring/.
+
+#export CURRENT_UID=$(id -u):$(id -g)
 export COMPOSE_HTTP_TIMEOUT=200
 
 docker-compose up

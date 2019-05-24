@@ -28,7 +28,7 @@ fi
 
 sleep 5
 echo ">>> Starting kafka $ID ..."
-bin/kafka-server-start.sh -daemon ${KAFKA_CONFIG:1} & 
+bin/kafka-server-start.sh ${KAFKA_CONFIG:1} & 
 pid="$!"
 
 trap 'term_handler' SIGHUP SIGINT SIGTERM

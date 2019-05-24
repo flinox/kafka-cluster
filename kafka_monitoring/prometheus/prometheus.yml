@@ -8,7 +8,9 @@ scrape_configs:
       - kafka1:8080
       - kafka2:8080
       - kafka3:8080
-#  - job_name: 'zookeeper'
-#    static_configs:
-#     - targets:
-#       - .....:8080
+ - job_name: 'zookeeper'
+   static_configs:
+    - targets:
+      - zookeeper1:8080
+      - zookeeper2:8080
+      - zookeeper3:8080            

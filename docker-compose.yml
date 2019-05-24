@@ -10,7 +10,7 @@ services:
   zookeeper1:
     build: ./zookeeper/
     image: flinox/zookeeper
-    user: ${CURRENT_UID}
+    user: 1000:1000
     hostname: zookeeper1
     container_name: zookeeper1      
     networks:
@@ -21,9 +21,11 @@ services:
       - ./zookeeper/conf/zookeeper1:/opt/zookeeper/conf
     ports:
       - "2181:2181"
+      - "8180:8080"            
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ID: 1
+      JAVA: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/zookeeper.yaml"      
     healthcheck:
         test: ["CMD", "echo", "stat", "|", "nc", "zookeeper1", "2181"]
         interval: 30s
@@ -34,7 +36,7 @@ services:
   zookeeper2:
     build: ./zookeeper/    
     image: flinox/zookeeper
-    user: ${CURRENT_UID}
+    user: 1000:1000
     hostname: zookeeper2
     container_name: zookeeper2
     networks:
@@ -45,9 +47,11 @@ services:
       - ./zookeeper/conf/zookeeper2:/opt/zookeeper/conf      
     ports:
       - "2182:2181"
+      - "8280:8080"            
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ID: 2     
+      JAVA: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/zookeeper.yaml"      
     healthcheck:
         test: ["CMD", "echo", "stat", "|", "nc", "zookeeper2", "2181"]
         interval: 30s
@@ -61,7 +65,7 @@ services:
   zookeeper3:
     build: ./zookeeper/    
     image: flinox/zookeeper
-    user: ${CURRENT_UID}
+    user: 1000:1000
     hostname: zookeeper3
     container_name: zookeeper3
     networks:
@@ -72,9 +76,11 @@ services:
       - ./zookeeper/conf/zookeeper3:/opt/zookeeper/conf      
     ports:
       - "2183:2181"
+      - "8380:8080"      
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ID: 3   
+      JAVA: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/zookeeper.yaml"
     healthcheck:
         test: ["CMD", "echo", "stat", "|", "nc", "zookeeper3", "2181"]
         interval: 30s
@@ -90,7 +96,7 @@ services:
   kafka1:
     build: ./kafka/    
     image: flinox/kafka
-    user: ${CURRENT_UID}    
+    user: 1000:1000    
     hostname: kafka1
     container_name: kafka1
     networks:
@@ -111,114 +117,114 @@ services:
     #     interval: 60s
     #     timeout: 20s
     #     retries: 5        
-    # depends_on:
-    #   zookeeper1:
-    #     condition: service_healthy
-    #   zookeeper2:
-    #     condition: service_healthy  
-    #   zookeeper3:
-    #     condition: service_healthy
+    depends_on:
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy  
+      zookeeper3:
+        condition: service_healthy
 
 
-  # kafka2:
-  #   build: ./kafka/        
-  #   image: flinox/kafka
-  #   user: ${CURRENT_UID}    
-  #   hostname: kafka2
-  #   container_name: kafka2
-  #   networks:
-  #     - cluster-net
-  #   volumes:
-  #     - ./kafka/log/kafka2:/opt/kafka/logs
-  #     - ./kafka/config/kafka2:/opt/kafka/config
-  #   ports:
-  #     - "9093:9092"
-  #     - "8083:8080"      
-  #   environment:
-  #     ID: 2
-  #     ALLOW_PLAINTEXT_LISTENER: "yes" 
-  #     KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
-  #     KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
-  #   healthcheck:
-  #       test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka2:9092"]
-  #       interval: 60s
-  #       timeout: 20s
-  #       retries: 5                
-  #   depends_on:
-  #     zookeeper1:
-  #       condition: service_healthy
-  #     zookeeper2:
-  #       condition: service_healthy  
-  #     zookeeper3:
-  #       condition: service_healthy   
-  #     kafka1:
-  #       condition: service_healthy
+  kafka2:
+    build: ./kafka/        
+    image: flinox/kafka
+    user: 1000:1000    
+    hostname: kafka2
+    container_name: kafka2
+    networks:
+      - cluster-net
+    volumes:
+      - ./kafka/log/kafka2:/opt/kafka/logs
+      - ./kafka/config/kafka2:/opt/kafka/config
+    ports:
+      - "9093:9092"
+      - "8083:8080"      
+    environment:
+      ID: 2
+      ALLOW_PLAINTEXT_LISTENER: "yes" 
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
+    # healthcheck:
+    #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka2:9092"]
+    #     interval: 60s
+    #     timeout: 20s
+    #     retries: 5                
+    depends_on:
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy  
+      zookeeper3:
+        condition: service_healthy   
+      kafka1:
+        condition: service_started
 
 
-  # kafka3:
-  #   build: ./kafka/        
-  #   image: flinox/kafka
-  #   user: ${CURRENT_UID}    
-  #   hostname: kafka3
-  #   container_name: kafka3
-  #   networks:
-  #     - cluster-net
-  #   volumes:
-  #     - ./kafka/log/kafka3:/opt/kafka/logs
-  #     - ./kafka/config/kafka3:/opt/kafka/config
-  #   ports:
-  #     - "9094:9092"
-  #     - "8084:8080"      
-  #   environment:
-  #     ID: 3
-  #     ALLOW_PLAINTEXT_LISTENER: "yes"
-  #     KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
-  #     KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
-  #     # KAFKA_ADVERTISED_HOST_NAME: 172.20.1.38
-  #     # LOG4J_LOGGER_KAFKA: "INFO"
-  #     # LOG4J_LOGGER_ORG_APACHE_KAFKA: "INFO"
-  #     # LOG4J_LOGGER_ORG_I0ITEC_ZKCLIENT_ZKCLIENT: "INFO"
-  #     # LOG4J_LOGGER_ORG_APACHE_ZOOKEEPER: "INFO"
-  #     # # Change to DEBUG or TRACE to enable request logging
-  #     # LOG4J_LOGGER_KAFKA_REQUEST_LOGGER: "DEBUG, requestAppender"
-  #     # LOG4J_ADDITIVITY_KAFKA_REQUEST_LOGGER: "true"
-  #     # #LOG4J_LOGGER_KAFKA_NETWORK_PROCESSOR: "TRACE, requestAppender"
-  #     # #LOG4J_LOGGER_KAFKA_SERVER_KAFKAAPIS: "TRACE, requestAppender"
-  #     # #LOG4J_ADDITIVITY_KAFKA_SERVER_KAFKAAPIS: "false"
-  #     # KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     # KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-  #     # KAFKA_NUM_IO_THREADS: 16 # 8
-  #     # KAFKA_NUM_NETWORK_THREADS: 6 # 3
-  #     # KAFKA_MAX_CONNECTIONS_PER_IP: 10 #
-  #     # #KAFKA_MAX_CONNECTIONS_PER_IP_OVERRIDES: 172.22.0.1:500,127.0.0.1:200
-  #     # KAFKA_NUM_PARTITIONS: 5
-  #     # KAFKA_OFFSETS_RETENTION_MINUTES: 2880
-  #     # KAFKA_LOG_RETENTION_HOURS: 48
-  #     # #KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     # #KAFKA_DEFAULT_REPLICATION_FACTOR: 1
-  #     # #KAFKA_MIN_INSYNC_REPLICAS: 1
-  #     # #LOG_RETENTION_MINUTES: 5
-  #     # #LOG_CLEANUP_POLICY: "compact"
-  #     # #LOG_CLEANER_THREADS: 2
-  #     # #KAFKA_CREATE_TOPICS: "Topic1:1:3,Topic2:1:1:compact"
-  #     # #HOSTNAME_COMMAND: "wget -t3 -T2 -qO-  http://169.254.169.254/latest/meta-data/local-ipv4"
-  #     # #Reference: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
-  #   healthcheck:
-  #       test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka3:9092"]
-  #       interval: 60s
-  #       timeout: 20s
-  #       retries: 5            
-  #   depends_on:
-  #     zookeeper1:
-  #       condition: service_healthy
-  #     zookeeper2:
-  #       condition: service_healthy  
-  #     zookeeper3:
-  #       condition: service_healthy   
-  #     kafka1:
-  #       condition: service_healthy        
-  #     kafka2:
-  #       condition: service_healthy
+  kafka3:
+    build: ./kafka/        
+    image: flinox/kafka
+    user: 1000:1000    
+    hostname: kafka3
+    container_name: kafka3
+    networks:
+      - cluster-net
+    volumes:
+      - ./kafka/log/kafka3:/opt/kafka/logs
+      - ./kafka/config/kafka3:/opt/kafka/config
+    ports:
+      - "9094:9092"
+      - "8084:8080"      
+    environment:
+      ID: 3
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
+      # KAFKA_ADVERTISED_HOST_NAME: 172.20.1.38
+      # LOG4J_LOGGER_KAFKA: "INFO"
+      # LOG4J_LOGGER_ORG_APACHE_KAFKA: "INFO"
+      # LOG4J_LOGGER_ORG_I0ITEC_ZKCLIENT_ZKCLIENT: "INFO"
+      # LOG4J_LOGGER_ORG_APACHE_ZOOKEEPER: "INFO"
+      # # Change to DEBUG or TRACE to enable request logging
+      # LOG4J_LOGGER_KAFKA_REQUEST_LOGGER: "DEBUG, requestAppender"
+      # LOG4J_ADDITIVITY_KAFKA_REQUEST_LOGGER: "true"
+      # #LOG4J_LOGGER_KAFKA_NETWORK_PROCESSOR: "TRACE, requestAppender"
+      # #LOG4J_LOGGER_KAFKA_SERVER_KAFKAAPIS: "TRACE, requestAppender"
+      # #LOG4J_ADDITIVITY_KAFKA_SERVER_KAFKAAPIS: "false"
+      # KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      # KAFKA_NUM_IO_THREADS: 16 # 8
+      # KAFKA_NUM_NETWORK_THREADS: 6 # 3
+      # KAFKA_MAX_CONNECTIONS_PER_IP: 10 #
+      # #KAFKA_MAX_CONNECTIONS_PER_IP_OVERRIDES: 172.22.0.1:500,127.0.0.1:200
+      # KAFKA_NUM_PARTITIONS: 5
+      # KAFKA_OFFSETS_RETENTION_MINUTES: 2880
+      # KAFKA_LOG_RETENTION_HOURS: 48
+      # #KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # #KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      # #KAFKA_MIN_INSYNC_REPLICAS: 1
+      # #LOG_RETENTION_MINUTES: 5
+      # #LOG_CLEANUP_POLICY: "compact"
+      # #LOG_CLEANER_THREADS: 2
+      # #KAFKA_CREATE_TOPICS: "Topic1:1:3,Topic2:1:1:compact"
+      # #HOSTNAME_COMMAND: "wget -t3 -T2 -qO-  http://169.254.169.254/latest/meta-data/local-ipv4"
+      # #Reference: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+    # healthcheck:
+    #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka3:9092"]
+    #     interval: 60s
+    #     timeout: 20s
+    #     retries: 5            
+    depends_on:
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy  
+      zookeeper3:
+        condition: service_healthy   
+      kafka1:
+        condition: service_started        
+      kafka2:
+        condition: service_started
 
 
   kafka_client:
@@ -244,9 +250,10 @@ services:
       - ./kafka_monitoring/prometheus/:/opt/prometheus/config
     ports:
       - "9090:9090"
+      - "3000:3000"
     stdin_open: true
     tty: true
-    command: /bin/bash -c "./prometheus --config.file ../config/prometheus.yml"    
+    #command: /bin/bash -c "./prometheus --config.file=../config/prometheus.yml"    
     depends_on:
       zookeeper1:
         condition: service_started
