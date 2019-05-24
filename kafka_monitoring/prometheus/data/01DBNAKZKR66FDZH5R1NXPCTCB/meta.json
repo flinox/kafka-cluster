@@ -1,0 +1,18 @@
+{
+	"ulid": "01DBNAKZKR66FDZH5R1NXPCTCB",
+	"minTime": 1558704364295,
+	"maxTime": 1558706400000,
+	"stats": {
+		"numSamples": 1069108,
+		"numSeries": 10637,
+		"numChunks": 10637,
+		"numBytes": 2270723
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01DBNAKZKR66FDZH5R1NXPCTCB"
+		]
+	},
+	"version": 1
+}
