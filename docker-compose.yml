@@ -105,11 +105,14 @@ services:
       - ./kafka/log/kafka1:/opt/kafka/logs
       - ./kafka/log/kafka1/log:/opt/kafka/log      
       - ./kafka/config/kafka1:/opt/kafka/config
+      - ./kafka/ssl/kafka1:/opt/ssl/
     ports:
-      - "9092:9092"
+      - "9992:9092"
+      - "9093:9093"      
       - "8082:8080"
     environment:
       ID: 1
+      SERVERPASSWORD: password
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
@@ -140,10 +143,12 @@ services:
       - ./kafka/log/kafka2/log:/opt/kafka/log      
       - ./kafka/config/kafka2:/opt/kafka/config
     ports:
-      - "9093:9092"
+      - "9993:9092"
+      - "9094:9093"      
       - "8083:8080"      
     environment:
       ID: 2
+      SERVERPASSWORD: password      
       ALLOW_PLAINTEXT_LISTENER: "yes" 
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
@@ -176,10 +181,12 @@ services:
       - ./kafka/log/kafka3/log:/opt/kafka/log      
       - ./kafka/config/kafka3:/opt/kafka/config
     ports:
-      - "9094:9092"
+      - "9994:9092"
+      - "9095:9093"      
       - "8084:8080"      
     environment:
       ID: 3
+      SERVERPASSWORD: password      
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"

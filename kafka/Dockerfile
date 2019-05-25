@@ -1,3 +1,5 @@
+## KAFKA ##
+
 FROM openjdk:8u201-jre-alpine
 
 ARG KFV=2.2.0

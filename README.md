@@ -194,6 +194,186 @@ Parametros
 - zookeeper (string) - Lista dos zookeepers (default "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181")
 
 
+
+>## Segurança
+
+## Encryption
+
+Como a SSL encryption funciona:
+![Security](plano/images/2019-05-25-SSL-encryption.png)
+
+- Vamos simular um CA privado no kafka_monitoring para fazer a SSL encryption.
+
+
+
+Sobre os dados trafegando na rede entre clients e brokers
+Encrypt Data ( SSL old version ) TLS ( Transport Layer Security ) new version
+SSL Protocol ( HTTPS )
+
+I-way verification ( Exemplo: browser > website ) ( Encryption )
+2-way verification, SSL authentication ( Authentication )
+
+CA ( Certificate Authority ) usamos nossa própria, private
+
+Kafka Server, keystore ( to CA )
+
+SSL Handshake
+
+## Criando o CA
+> kafka_monitoring
+mkdir /opt/ssl
+cd /opt/ssl
+openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka-security-CA" -keyout ca-key -out ca-cert -nodes
+
+-- Private key
+ca-key
+
+-- Certificate key (public)
+ca-cert
+
+## Criando a keystore for kafka1
+> kafka_monitoring
+export SERVERPASSWORD=password
+cd /opt/ssl
+keytool -genkey -keystore kafka1.keystore.jks -validity 365 -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -dname "CN=kafka1" -storetype pkcs12
+
+-- olhar o conteudo
+keytool -list -v -keystore kafka1.keystore.jks
+
+-- generate the sign request ( Enviaria o cert-file para o CA e receberia sign version do seu certificado )
+keytool -keystore kafka1.keystore.jks -certreq -file cert-file -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD
+
+-- assinando o cert-file nos mesmos pelo nosso CA privado, resultado teremos o cert-signed para o kafka1
+openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:$SERVERPASSWORD
+
+-- olhar o conteudo
+keytool -printcert -v -file cert-signed
+
+
+## Criando a truststore for kafka1
+> kafka_monitoring
+export SERVERPASSWORD=password
+keytool -keystore kafka1.truststore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+
+-- import ca-cert to the keystore
+keytool -keystore kafka1.keystore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+
+-- import cert-signed to thekeystore
+keytool -keystore kafka1.keystore.jks -import -file cert-signed -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+
+
+
+
+## Configurando o broker kafka para SSL 
+copiar os arquivos kafka1*.* para o kafka1 broker pasta /opt/ssl
+
+Alterar o arquivo server.properties conforme exemplo:
+
+```
+listeners=PLAINTEXT://0.0.0.0:9092,SSL://0.0.0.0:9093
+
+# Hostname and port the broker will advertise to producers and consumers. If not set, 
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+advertised.listeners=PLAINTEXT://kafka1:9092,SSL://kafka1:9093
+
+ssl.keystore.location=/opt/ssl/kafka1.keystore.jks
+ssl.keystore.password=password
+ssl.key.password=password
+ssl.truststore.location=/opt/ssl/kafka1.truststore.jks
+ssl.truststore.password=password
+```
+
+
+## Clients
+copiar ca-cert e cert-signed voce pode distribuir publicamente para os clients
+
+
+
+
+
+### Script para gerar keystore e truststore para os outros brokers
+
+```
+
+## Criando a keystore for $BROKERNAME
+export SERVERPASSWORD=password
+export BROKERNAME=kafka2
+
+cd /opt/ssl
+
+## Deletando arquivos antigos
+rm cert-file
+rm cert-signed
+rm ca-cert.srl
+
+
+keytool -genkey -keystore $BROKERNAME.keystore.jks -validity 365 -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -dname "CN=${BROKERNAME}" -storetype pkcs12
+
+## olhar o conteudo
+# keytool -list -v -keystore $BROKERNAME.keystore.jks
+
+## generate the sign request ( Enviaria o cert-file para o CA e receberia sign version do seu certificado )
+keytool -keystore $BROKERNAME.keystore.jks -certreq -file cert-file -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD
+
+## assinando o cert-file nos mesmos pelo nosso CA privado, resultado teremos o cert-signed para o kafkaX
+openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:$SERVERPASSWORD
+
+## olhar o conteudo
+# keytool -printcert -v -file cert-signed
+
+## Criando a truststore for $BROKERNAME
+
+keytool -keystore $BROKERNAME.truststore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+
+-- import ca-cert to the keystore
+keytool -keystore $BROKERNAME.keystore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+
+-- import cert-signed to thekeystore
+keytool -keystore $BROKERNAME.keystore.jks -import -file cert-signed -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+
+```
+
+
+
+
+
+
+## Para saber se carregou corretamente o nosso kafka1 com as alteracoes no server.properties, consulte no server.log do broker
+
+```
+docker-compose logs kafka1 | grep "EndPoint"
+#ou
+#grep "EndPoint" /logs/server.log
+```
+
+## Para saber se a porta SSL 9093 está acessível, rode:
+
+```
+openssl s_client -connect kafka1:9093
+```
+
+
+
+
+
+## Authentication
+Clients connect on Kafka Cluster
+Client prove their identity to connect on Cluster
+SASL ( Kerberos ) Auth
+
+## Authorisation
+Publicar e consumir de um topico
+ACL ( Access Control List )
+
+
+
+
+
+
+## SSH
+ssh -i keypair.pem usuario@hostname.com
+
 ## Apoio técnico
 
 ### Caso queira realizar o build manual das imagens
@@ -270,3 +450,4 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 
 - https://medium.com/rahasak/kafka-producer-with-golang-fab7348a5f9a
 - https://medium.com/rahasak/kafka-consumer-with-golang-a93db6131ac2
+- https://courses.datacumulus.com/kafka-security-a42

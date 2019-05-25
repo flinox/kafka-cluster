@@ -1,3 +1,4 @@
+## KAFKA_CLIENT ##
 
 FROM ubuntu:latest
 

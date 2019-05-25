@@ -1,3 +1,4 @@
+## KAFKA_MONITORING ##
 
 FROM ubuntu:latest
 
@@ -13,7 +14,7 @@ ENV PROMETHEUS_VERSION=${PRV} \
     GRAFANA_HOME=${GRH} \
     GRAFANA_VERSION=${GRV}
 
-RUN apt-get update && apt-get install -y apt-utils wget sed
+RUN apt-get update && apt-get install -y apt-utils wget sed net-tools netcat default-jre default-jdk
 
 # Install prometheus server
 RUN mkdir -p ${PROMETHEUS_HOME} \
