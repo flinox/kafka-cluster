@@ -164,6 +164,36 @@ Para acessar o grafana:
 
 
 
+>## Aplicações de exemplo
+
+### Producer
+```
+docker exec -it kafka_client go run ./src/app_producer/producer.go
+```
+Se não informar nada, pegará os valores default definidos nas variaveis de ambiente do container, ou você pode fazer um override usando um dos parametros abaixo.
+
+Parametros
+
+- kafka (string) - Lista de kafka brokers (default "kafka1:9092,kafka2:9093,kafka3:9094")
+- loop (bool) - Produzir mensagens de teste infinitamente
+- topic (string) - Tópico que deseja produzir as mensagens (default "test-topic")
+- verbose (bool) - Informe se quer log mais verboso
+
+### Consumer
+```
+docker exec -it kafka_client go run ./src/app_consumer/consumer.go
+```
+Se não informar nada, pegará os valores default definidos nas variaveis de ambiente do container, ou você pode fazer um override usando um dos parametros abaixo.
+
+Parametros
+
+- consumer (string) - Consumer group das mensagens (default "flinox")
+- latest (book) - Informe false para buscar as mensagens mais antigas (default true)
+- topic (string) - Tópico que deseja consumir as mensagens (default "test-topic")
+- verbose (bool) - Informe se quer log mais verboso
+- zookeeper (string) - Lista dos zookeepers (default "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181")
+
+
 ## Apoio técnico
 
 ### Caso queira realizar o build manual das imagens
@@ -221,6 +251,7 @@ kafka-console-producer --broker-list kafka1:9092,kafka2:9093,kafka3:9094 --topic
 kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delete --topic test-topic
 ```
 
+
 ## Referências
 
 - https://github.com/flinox/kafka_cluster
@@ -229,7 +260,7 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 - https://kafka.apache.org/documentation/
 - https://docs.confluent.io/current/kafka/monitoring.html
 - https://zookeeper.apache.org/
-- [Gráfico Burndown e Burnup na nuvem e de graça](https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up)
+- https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up
 - https://courses.datacumulus.com/kafka-monitoring-b88
 - https://github.com/prometheus/jmx_exporter
 - https://github.com/prometheus/prometheus

@@ -277,6 +277,7 @@ services:
       KAFKA_HOST: "kafka1:9092,kafka2:9093,kafka3:9094"
       KAFKA_TOPIC: "test-topic"
       ZOOKEEPER_HOST: "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+      CONSUMER_GROUP: "flinox"
     stdin_open: true
     tty: true
     command: /bin/bash -c "sleep infinity"        
