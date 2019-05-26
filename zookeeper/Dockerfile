@@ -32,8 +32,11 @@ RUN addgroup -S -g ${UID} ${USER} \
      && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Install aplications needed
-RUN apk add --no-cache bash curl jq nano sudo openrc acl \
+RUN apk add --no-cache bash curl jq nano sudo openrc acl openssl tzdata \
     && cd /tmp && wget http://ftp.unicamp.br/pub/apache/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
+
+# Adjusting timezone
+RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" >  /etc/timezone && date
 
 # Extract zookeeper 
 RUN tar xfz /tmp/zookeeper-${ZOOKEEPER_VERSION}.tar.gz -C /opt \

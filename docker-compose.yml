@@ -112,7 +112,7 @@ services:
       - "8082:8080"
     environment:
       ID: 1
-      SERVERPASSWORD: password
+      SERVERPASSWORD: "verysecret"
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
@@ -142,13 +142,14 @@ services:
       - ./kafka/log/kafka2:/opt/kafka/logs
       - ./kafka/log/kafka2/log:/opt/kafka/log      
       - ./kafka/config/kafka2:/opt/kafka/config
+      - ./kafka/ssl/kafka2:/opt/ssl/      
     ports:
       - "9993:9092"
       - "9094:9093"      
       - "8083:8080"      
     environment:
       ID: 2
-      SERVERPASSWORD: password      
+      SERVERPASSWORD: "verysecret"
       ALLOW_PLAINTEXT_LISTENER: "yes" 
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
@@ -180,13 +181,14 @@ services:
       - ./kafka/log/kafka3:/opt/kafka/logs
       - ./kafka/log/kafka3/log:/opt/kafka/log      
       - ./kafka/config/kafka3:/opt/kafka/config
+      - ./kafka/ssl/kafka3:/opt/ssl/      
     ports:
       - "9994:9092"
       - "9095:9093"      
       - "8084:8080"      
     environment:
       ID: 3
-      SERVERPASSWORD: password      
+      SERVERPASSWORD: "verysecret"
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
@@ -250,6 +252,7 @@ services:
       - ./kafka_monitoring/prometheus/data/:/opt/prometheus/data
       - ./kafka_monitoring/grafana/conf/:/opt/grafana/conf
       - ./kafka_monitoring/grafana/data/:/opt/grafana/data      
+      - ./kafka_monitoring/ssl/:/opt/ssl      
     ports:
       - "9090:9090"
       - "3000:3000"
@@ -279,12 +282,14 @@ services:
       - cluster-net
     volumes:
       - ./kafka_client/app_consumer/:/go/src/app_consumer
-      - ./kafka_client/app_producer/:/go/src/app_producer      
+      - ./kafka_client/app_producer/:/go/src/app_producer  
+      - ./kafka_client/ssl/:/opt/ssl    
     environment: 
       KAFKA_HOST: "kafka1:9092,kafka2:9093,kafka3:9094"
       KAFKA_TOPIC: "test-topic"
       ZOOKEEPER_HOST: "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
       CONSUMER_GROUP: "flinox"
+      CLIENTPASSWORD: "clientsecretkey"
     stdin_open: true
     tty: true
     command: /bin/bash -c "sleep infinity"        

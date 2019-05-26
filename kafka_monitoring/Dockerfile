@@ -12,9 +12,12 @@ ENV PROMETHEUS_VERSION=${PRV} \
     PROMETHEUS_HOME=${PRH} \  
     ARCHITECTURE=${ARC} \
     GRAFANA_HOME=${GRH} \
-    GRAFANA_VERSION=${GRV}
+    GRAFANA_VERSION=${GRV} \
+    DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y apt-utils wget sed net-tools netcat default-jre default-jdk
+RUN apt-get update && apt-get install -y apt-utils wget sed net-tools netcat default-jre default-jdk tzdata
+
+RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" >  /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 # Install prometheus server
 RUN mkdir -p ${PROMETHEUS_HOME} \
@@ -30,6 +33,8 @@ RUN mkdir -p ${GRAFANA_HOME} && mkdir -p ${GRAFANA_HOME}/data \
 RUN tar -C ${GRAFANA_HOME} -zxvf ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz && rm ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz \
     && mv ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}/* ${GRAFANA_HOME} \
     && cd ${GRAFANA_HOME} && rm ./grafana-${GRAFANA_VERSION} -R
+
+RUN apt update && apt upgrade -y openssl
 
 COPY ./grafana/conf/defaults.ini ${GRAFANA_HOME}/conf
 

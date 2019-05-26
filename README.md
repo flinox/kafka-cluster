@@ -223,7 +223,7 @@ SSL Handshake
 > kafka_monitoring
 mkdir /opt/ssl
 cd /opt/ssl
-openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka-security-CA" -keyout ca-key -out ca-cert -nodes
+openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka_monitoring" -keyout ca-key -out ca-cert -nodes
 
 -- Private key
 ca-key
@@ -290,15 +290,20 @@ copiar ca-cert e cert-signed voce pode distribuir publicamente para os clients
 
 
 
+## Ajustando horario dos servidores para Brasil Sao Paulo
+ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
-
-### Script para gerar keystore e truststore para os outros brokers
+### Script para criar CA, gerar keystore e truststore para os outros brokers
 
 ```
+## CA
+mkdir /opt/ssl
+cd /opt/ssl
+openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka_monitoring" -keyout ca-key -out ca-cert -nodes
 
-## Criando a keystore for $BROKERNAME
-export SERVERPASSWORD=password
-export BROKERNAME=kafka2
+## Criando a keystore for broker
+export SERVERPASSWORD=verysecret
+export BROKERNAME=kafka3
 
 cd /opt/ssl
 
@@ -307,37 +312,29 @@ rm cert-file
 rm cert-signed
 rm ca-cert.srl
 
-
 keytool -genkey -keystore $BROKERNAME.keystore.jks -validity 365 -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -dname "CN=${BROKERNAME}" -storetype pkcs12
 
-## olhar o conteudo
-# keytool -list -v -keystore $BROKERNAME.keystore.jks
-
+sleep 4
 ## generate the sign request ( Enviaria o cert-file para o CA e receberia sign version do seu certificado )
 keytool -keystore $BROKERNAME.keystore.jks -certreq -file cert-file -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD
 
+sleep 4
 ## assinando o cert-file nos mesmos pelo nosso CA privado, resultado teremos o cert-signed para o kafkaX
 openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:$SERVERPASSWORD
 
-## olhar o conteudo
-# keytool -printcert -v -file cert-signed
-
 ## Criando a truststore for $BROKERNAME
-
+sleep 4
 keytool -keystore $BROKERNAME.truststore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
 
--- import ca-cert to the keystore
+## import ca-cert to the keystore
+sleep 4
 keytool -keystore $BROKERNAME.keystore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
 
--- import cert-signed to thekeystore
+## import cert-signed to thekeystore
+sleep 4
 keytool -keystore $BROKERNAME.keystore.jks -import -file cert-signed -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
 
 ```
-
-
-
-
-
 
 ## Para saber se carregou corretamente o nosso kafka1 com as alteracoes no server.properties, consulte no server.log do broker
 
@@ -350,10 +347,36 @@ docker-compose logs kafka1 | grep "EndPoint"
 ## Para saber se a porta SSL 9093 está acessível, rode:
 
 ```
-openssl s_client -connect kafka1:9093
+openssl s_client -connect kafka1:9093 -state -debug
 ```
 
 
+## Kafka_Client configuration
+export CLIENTPASSWORD=clientsecretkey
+export CLIENTNAME=kafka_client
+cd /opt/ssl
+
+<copy ca-cert to this folder>
+
+keytool -keystore $CLIENTNAME.truststore.jks -alias CARoot -import -file ca-cert -storepass $CLIENTPASSWORD -keypass $CLIENTPASSWORD -noprompt
+
+<create a client.properties>
+
+## Kafka_client produce message via SSL port
+
+```
+kafka-console-producer --broker-list kafka1:9093,kafka2:9093,kafka3:9093 --topic test-topic --timeout 30000 --property "client.id=flinox" --producer.config /opt/ssl/client.properties
+```
+
+## Kafka_client consume message via SSL port
+```
+kafka-console-consumer --bootstrap-server kafka1:9092,kafka2:9093,kafka3:9094 \
+--topic test-topic \
+--timeout-ms 30000 \
+--property group.id=flinox \
+--from-beginning
+--consumer.config /opt/ssl/client.properties
+```
 
 
 

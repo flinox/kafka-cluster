@@ -35,4 +35,5 @@ trap 'term_handler' SIGHUP SIGINT SIGTERM
 
 sleep 5
 
-tail -f ${KAFKA_LOG}/kafkaServer.out & wait
+#tail -f ${KAFKA_LOG}/server.log & 
+wait
