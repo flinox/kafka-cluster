@@ -4,6 +4,7 @@ FROM ubuntu:latest
 
 ARG PRV=2.9.2
 ARG GRV=6.2.0
+ARG SSL=1.1.1b
 ARG ARC=linux-amd64
 ARG PRH=/opt/prometheus
 ARG GRH=/opt/grafana
@@ -13,6 +14,7 @@ ENV PROMETHEUS_VERSION=${PRV} \
     ARCHITECTURE=${ARC} \
     GRAFANA_HOME=${GRH} \
     GRAFANA_VERSION=${GRV} \
+    OPENSSL_VERSION=${SSL} \
     DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y apt-utils wget sed net-tools netcat default-jre default-jdk tzdata
@@ -34,7 +36,12 @@ RUN tar -C ${GRAFANA_HOME} -zxvf ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${AR
     && mv ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}/* ${GRAFANA_HOME} \
     && cd ${GRAFANA_HOME} && rm ./grafana-${GRAFANA_VERSION} -R
 
-RUN apt update && apt upgrade -y openssl
+# Install openssl
+RUN apt-get install -y perl make gcc \
+    && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -P /tmp && tar -xzvf /tmp/openssl-${OPENSSL_VERSION}.tar.gz -C /tmp
+
+RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old && ./config && make install \
+    && ln -s /usr/local/bin/openssl /usr/bin/openssl && ldconfig && openssl version
 
 COPY ./grafana/conf/defaults.ini ${GRAFANA_HOME}/conf
 

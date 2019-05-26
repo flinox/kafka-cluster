@@ -2,10 +2,12 @@
 
 FROM ubuntu:latest
 
+ARG SSL=1.1.1b
+
 ENV DEBIAN_FRONTEND noninteractive
 ENV GOPATH /go
 ENV PATH ${PATH}:${GOPATH}/bin:/usr/local/go/bin
-
+ENV OPENSSL_VERSION=${SSL}
 
 RUN apt-get update && apt-get install -y apt-utils tzdata
 
@@ -29,11 +31,26 @@ RUN go get -v github.com/Shopify/sarama
 
 RUN go get -v github.com/wvanbergen/kafka/consumergroup
 
-RUN wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz -P /tmp/ && tar -C /tmp -xzvf /tmp/openssl-1.1.1b.tar.gz \
-    && cd /tmp/openssl-1.1.1b && ./config && make install 
-RUN mv /usr/bin/openssl openssl.old && ln -s /usr/local/bin/openssl /usr/bin/openssl && openssl version
-
 RUN mkdir -p /go/src/app_producer && mkdir -p /go/src/app_consumer
+
+# Install openssl
+RUN apt-get install -y perl make gcc \
+    && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -P /tmp && tar -xzvf /tmp/openssl-${OPENSSL_VERSION}.tar.gz -C /tmp
+
+RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old && ./config && make install \
+    && ln -s /usr/local/bin/openssl /usr/bin/openssl && ldconfig && openssl version
+
+# wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz -P /tmp
+# tar -xzvf openssl-1.1.1b.tar.gz -C /tmp
+# cd openssl-1.1.1b
+# apt-get install -y perl make gcc
+# ./config
+# make test
+# mv /usr/bin/openssl ~/tmp/openssl_old
+# make install
+# sudo ln -s /usr/local/bin/openssl /usr/bin/openssl
+# ldconfig
+# openssl version
 
 WORKDIR /go
 

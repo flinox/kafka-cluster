@@ -60,6 +60,7 @@ Link para acompanhar em tempo real:
 - Grafana 6.1.6
 - Visual Studio Code
 - Linux Mint 64bits
+- Openssl 1.1.1b
 
 
 # Como rodar o ambiente
@@ -297,7 +298,7 @@ ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
 ```
 ## CA
-mkdir /opt/ssl
+mkdir -p /opt/ssl
 cd /opt/ssl
 openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka_monitoring" -keyout ca-key -out ca-cert -nodes
 
@@ -473,4 +474,5 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 
 - https://medium.com/rahasak/kafka-producer-with-golang-fab7348a5f9a
 - https://medium.com/rahasak/kafka-consumer-with-golang-a93db6131ac2
+- https://github.com/wvanbergen/kafka/consumergroup
 - https://courses.datacumulus.com/kafka-security-a42
