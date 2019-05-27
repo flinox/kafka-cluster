@@ -349,6 +349,8 @@ docker-compose logs kafka1 | grep "EndPoint"
 
 ```
 openssl s_client -connect kafka1:9093 -state -debug
+
+openssl s_client -connect kafka1:9093 -CApath /etc/ssl/certs
 ```
 
 

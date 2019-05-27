@@ -1,60 +1,43 @@
+#!/bin/bash
 
+echo "Generate keystore e cert-file..."
+read -p "Pressione uma tecla para continuar..."
+docker exec -it kafka1 sh /opt/script/cert-01.sh
 
-if [ $# -eq 0 ]
-  then
-    echo "Informe o nome do broker"
-    exit 1
-fi
+sleep 2
+docker exec -it kafka2 sh /opt/script/cert-01.sh
 
-echo 'Preparando arquivos para broker '$1
+sleep 2
+docker exec -it kafka3 sh /opt/script/cert-01.sh
 
-# CA SERVER
-# Criando um CA ( Certificate authority ) privado para assinar os certificados
-# saida: ca-cert e ca-key
-# openssl req -new -x509 -keyout ca-key -out ca-cert -days 365 
+echo "Envia cert-file to CA..."
+read -p "Pressione uma tecla para continuar..."
+cp ../kafka/ssl/kafka1/cert-file ../kafka_monitoring/ssl/kafka1/
+cp ../kafka/ssl/kafka2/cert-file ../kafka_monitoring/ssl/kafka2/
+cp ../kafka/ssl/kafka3/cert-file ../kafka_monitoring/ssl/kafka3/
 
-export BROKERNAME=$1
-export BROKERPASSWORD=verysecret
-export CAPASSWORD=verysecret
+echo "Assina o cert-file para gerar o cert-signed..."
+read -p "Pressione uma tecla para continuar..."
+docker exec -it kafka_monitoring bash /opt/ssl/cert-02.sh
 
-## Deletando arquivos antigos
-[ ! -e cert-file ] || rm cert-file
-[ ! -e cert-signed ] || rm cert-signed
-[ ! -e ca-cert.srl ] || rm ca-cert.srl
+echo "Envia cert-signed do CA para os brokers..."
+read -p "Pressione uma tecla para continuar..."
+cp ../kafka_monitoring/ssl/kafka1/cert-signed ../kafka/ssl/kafka1/
+cp ../kafka_monitoring/ssl/kafka2/cert-signed ../kafka/ssl/kafka2/
+cp ../kafka_monitoring/ssl/kafka3/cert-signed ../kafka/ssl/kafka3/
 
-# BROKER SERVER
-# Gerar um certificado x509 para cada kafka broker ( não assinado )
-# saida: server.keystore.jks
-sleep 3
-keytool -keystore $BROKERNAME.keystore.jks -alias $BROKERNAME -validity 365 -genkey -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -ext SAN=DNS:$BROKERNAME -noprompt
+echo "Importa cert-signed para keystore e gera truststore..."
+read -p "Pressione uma tecla para continuar..."
+docker exec -it kafka1 sh /opt/script/cert-03.sh
 
-# BROKER SERVER
-# Gerar uma requisicao de certificado ( não assinado ) para que o CA possa assinar
-# entrada: server.keystore.jks
-# saida: cert-file
-sleep 3
-keytool -keystore $BROKERNAME.keystore.jks -alias $BROKERNAME -certreq -file cert-file -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+sleep 2
+docker exec -it kafka2 sh /opt/script/cert-03.sh
 
-# CA SERVER
-# Assinar o certificados do broker
-# entrada: cert-file
-# saida: cert-signed
-sleep 3
-openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:$CAPASSWORD
+sleep 2
+docker exec -it kafka3 sh /opt/script/cert-03.sh
 
-# BROKER SERVER
-# Importar o certificado assinado e a chave publica do CA que assinou para a keystore
-# entrada: ca-cert e cert-signed
-# saida: server.keystore.jks updated
-sleep 3
-keytool -keystore $BROKERNAME.keystore.jks -alias CARoot -import -file ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
-sleep 3
-keytool -keystore $BROKERNAME.keystore.jks -alias $BROKERNAME -import -file cert-signed -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+echo "Testar secutiry..."
+read -p "Pressione uma tecla para continuar..."
+docker exec -it kafka_monitoring bash -c "openssl s_client -debug -connect kafka1:9093 -tls1"
 
-# BROKER SERVER
-# Importar a chave publica do CA para o truststore
-# entrada: ca-cert
-# saida: server.truststore.jks 
-sleep 3
-keytool -keystore $BROKERNAME.truststore.jks -alias CARoot -import -file ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
-
+echo "Fim."

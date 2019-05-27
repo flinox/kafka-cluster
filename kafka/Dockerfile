@@ -65,6 +65,11 @@ RUN chown ${USER}:${GID} ${KAFKA_DATA} \
     && chown ${USER}:${GID} -R ${KAFKA_LOG} \
     && chown ${USER}:${GID} -R ${PROMETHEUS_HOME}
 
+# Install certificate CA private
+RUN apk add --no-cache ca-certificates iputils openssh 
+# COPY ./ssl/CA/ca-cert /usr/share/ca-certificates/
+# RUN chmod 644 /usr/share/ca-certificates/ca-cert && update-ca-certificates
+
 USER ${USER}
 
 EXPOSE 9092

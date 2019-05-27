@@ -8,7 +8,7 @@ services:
 
 
   zookeeper1:
-    build: ./zookeeper/
+    #build: ./zookeeper/
     image: flinox/zookeeper
     user: 1000:1000
     hostname: zookeeper1
@@ -34,7 +34,7 @@ services:
   
 
   zookeeper2:
-    build: ./zookeeper/    
+    #build: ./zookeeper/    
     image: flinox/zookeeper
     user: 1000:1000
     hostname: zookeeper2
@@ -63,7 +63,7 @@ services:
 
 
   zookeeper3:
-    build: ./zookeeper/    
+    #build: ./zookeeper/    
     image: flinox/zookeeper
     user: 1000:1000
     hostname: zookeeper3
@@ -94,7 +94,7 @@ services:
 
 
   kafka1:
-    build: ./kafka/    
+    #build: ./kafka/    
     image: flinox/kafka
     user: 1000:1000    
     hostname: kafka1
@@ -106,6 +106,7 @@ services:
       - ./kafka/log/kafka1/log:/opt/kafka/log      
       - ./kafka/config/kafka1:/opt/kafka/config
       - ./kafka/ssl/kafka1:/opt/ssl/
+      - ./kafka/ssl/script:/opt/script/      
     ports:
       - "9992:9092"
       - "9093:9093"      
@@ -131,7 +132,7 @@ services:
 
 
   kafka2:
-    build: ./kafka/        
+    #build: ./kafka/        
     image: flinox/kafka
     user: 1000:1000    
     hostname: kafka2
@@ -143,6 +144,7 @@ services:
       - ./kafka/log/kafka2/log:/opt/kafka/log      
       - ./kafka/config/kafka2:/opt/kafka/config
       - ./kafka/ssl/kafka2:/opt/ssl/      
+      - ./kafka/ssl/script:/opt/script/      
     ports:
       - "9993:9092"
       - "9094:9093"      
@@ -170,7 +172,7 @@ services:
 
 
   kafka3:
-    build: ./kafka/        
+    #build: ./kafka/        
     image: flinox/kafka
     user: 1000:1000    
     hostname: kafka3
@@ -181,7 +183,8 @@ services:
       - ./kafka/log/kafka3:/opt/kafka/logs
       - ./kafka/log/kafka3/log:/opt/kafka/log      
       - ./kafka/config/kafka3:/opt/kafka/config
-      - ./kafka/ssl/kafka3:/opt/ssl/      
+      - ./kafka/ssl/kafka3:/opt/ssl/
+      - ./kafka/ssl/script:/opt/script/  
     ports:
       - "9994:9092"
       - "9095:9093"      
@@ -241,7 +244,7 @@ services:
 
 
   kafka_monitoring:
-    build: ./kafka_monitoring/
+    #build: ./kafka_monitoring/
     image: flinox/kafka_monitoring
     hostname: kafka_monitoring
     container_name: kafka_monitoring
@@ -274,7 +277,7 @@ services:
 
 
   kafka_client:
-    build: ./kafka_client/
+    #build: ./kafka_client/
     image: flinox/kafka_client
     hostname: kafka_client
     container_name: kafka_client

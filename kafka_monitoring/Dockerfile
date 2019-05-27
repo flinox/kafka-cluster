@@ -45,6 +45,11 @@ RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old &
 
 COPY ./grafana/conf/defaults.ini ${GRAFANA_HOME}/conf
 
+# Install certificate CA private
+RUN apt-get install -y ca-certificates iputils-ping openssh-server
+# COPY ./ssl/CA/ca-cert /usr/share/ca-certificates/
+# RUN chmod 644 /usr/share/ca-certificates/ca-cert && update-ca-certificates
+
 # Copying files
 COPY start.sh ${GRAFANA_HOME}
 

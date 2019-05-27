@@ -40,6 +40,11 @@ RUN apt-get install -y perl make gcc \
 RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old && ./config && make install \
     && ln -s /usr/local/bin/openssl /usr/bin/openssl && ldconfig && openssl version
 
+# Install certificate CA private
+RUN apt-get install -y ca-certificates iputils-ping openssh-server
+# COPY ./ssl/CA/ca-cert /usr/share/ca-certificates/
+# RUN chmod 644 /usr/share/ca-certificates/ca-cert && update-ca-certificates
+
 # wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz -P /tmp
 # tar -xzvf openssl-1.1.1b.tar.gz -C /tmp
 # cd openssl-1.1.1b
