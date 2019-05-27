@@ -476,3 +476,4 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 - https://medium.com/rahasak/kafka-consumer-with-golang-a93db6131ac2
 - https://github.com/wvanbergen/kafka/consumergroup
 - https://courses.datacumulus.com/kafka-security-a42
+- https://docs.confluent.io/current/tutorials/security_tutorial.html#generating-keys-certs
