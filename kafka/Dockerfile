@@ -68,6 +68,7 @@ RUN chown ${USER}:${GID} ${KAFKA_DATA} \
 USER ${USER}
 
 EXPOSE 9092
+EXPOSE 9093
 EXPOSE 8080
 
 CMD sh -c "./start.sh"
