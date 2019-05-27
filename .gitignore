@@ -5,7 +5,7 @@ __temp/*
 kafka_monitoring/ssl/ca-key
 kafka_monitoring/ssl/kafka*
 kafka_monitoring/ssl/*
-kafka/ssl/*
+#kafka/ssl/*
 kafka_client/ssl/*
 #kafka_monitoring/grafana/data/*
 #kafka_monitoring/prometheus/data/*
