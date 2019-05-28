@@ -12,26 +12,20 @@
 - (*) são stories desejadas/diferenciais.
 - O esforço foi estimado apenas para as stories principais do sprint, caso sobre tempo puxarei outras stories (*) para não comprometer a entrega.
 
-### Stories tasks
+- Capacity: 40 pontos para sprint de 1 semana.
+
+### Planejado
 
 >21/05
 >>![Tasks](/plano/images/2019-05-22-stories-tasks.png)
-
->28/05
->>![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
-
-## Acompanhamento
-
-- Capacity: 40 pontos para sprint de 1 semana.
-- Burndown planejado:
-
->21/05
 >>![Burndown](/plano/images/2019-05-21-burndown.png)
 
 
->28/05
->>![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
+### Realizado
 
+>28/05
+>>![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
+>>![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
 
 Link para o burndown:
 
@@ -72,7 +66,7 @@ Link para o burndown:
 - Openssl 1.1.1b
 
 
-# Como rodar o ambiente
+># Como rodar o ambiente
 
 >## Pré-requisitos
 - [Docker 18.09.5](https://docs.docker.com/v17.12/install)
@@ -144,33 +138,26 @@ Todos os dados, logs e configurações estão persistentes e fora dos containers
     ```./kafka_monitoring/grafana/data/```
 
   
->## Monitoração
 
-Acompanhar logs do cluster, rode:
 
+>## Utilizando o cluster
+
+### Criando um tópico 
 ```
-docker-compose logs -f
-```
-
-Para acompanhar log de um nó específico, rode:
-
-```
-docker-compose logs <nome_servico> -f
+docker exec -it kafka_client bash -c "kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --create --topic test-topic --partitions 3 --replication-factor 3"
 ```
 
-## Grafana
+### Produzindo mensagens no tópico
 
-No Grafana você consegue monitorar os principais indicadores que julga importante para acompanhar a "saúde" do kafka.
-Para acessar o grafana:
-[http://localhost:3000](http://localhost:3000)
-![Grafana](/plano/images/2019-05-24-grafana-01.png)
+```
+docker exec -it kafka_client bash -c "kafka-console-producer --broker-list kafka1:9092,kafka2:9092,kafka3:9092 --topic test-topic --timeout 30000"
+```
 
+### Consumindo mensagens do tópico
 
-## Prometheus
-Onde são armazenadas as métricas que são coletadas dos brokers, estes dados servem de base para o grafana, Acesse o prometheus através do endereço:
-[http://localhost:9090](http://localhost:9090)
-![Prometheus](/plano/images/2019-05-23-prometheus-01.png)
-
+```
+docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 --topic test-topic --timeout-ms 30000 --property group.id=flinox --from-beginning"
+```
 
 
 >## Aplicações de exemplo
@@ -203,7 +190,37 @@ Parametros
 - zookeeper (string) - Lista dos zookeepers (default "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181")
 
 
->## Segurança
+>## Monitoração
+
+Acompanhar logs do cluster, rode:
+
+```
+docker-compose logs -f
+```
+
+Para acompanhar log de um nó específico, rode:
+
+```
+docker-compose logs <nome_servico> -f
+```
+
+## Grafana
+
+No Grafana você consegue monitorar os principais indicadores que julga importante para acompanhar a "saúde" do kafka.
+Para acessar o grafana:
+[http://localhost:3000](http://localhost:3000)
+![Grafana](/plano/images/2019-05-24-grafana-01.png)
+
+
+## Prometheus
+Onde são armazenadas as métricas que são coletadas dos brokers, estes dados servem de base para o grafana, Acesse o prometheus através do endereço:
+[http://localhost:9090](http://localhost:9090)
+![Prometheus](/plano/images/2019-05-23-prometheus-01.png)
+
+
+
+
+># Segurança
 
 ## SSL Encryption
 
@@ -344,6 +361,7 @@ SSL-Session:
     Extended master secret: yes
 ---
 ```
+>## Utilizando o cluster com segurança
 
 
 ### Criar topico security
@@ -375,7 +393,7 @@ client.id=flinox
 ```
 docker exec -it kafka_client bash -c "kafka-console-producer --broker-list kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout 30000 --producer.config /opt/ssl/kafka_client.properties"
 ```
-
+- Devido a criptografia ocorre perda de performance ao publicar mensagem.
 
 ### Consumindo mensagens da porta segura
 
@@ -383,6 +401,7 @@ docker exec -it kafka_client bash -c "kafka-console-producer --broker-list kafka
 docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout-ms 30000 --consumer.config /opt/ssl/kafka_client.properties --property group.id=flinox --from-beginning"
 ```
 
+- Devido a criptografia ocorre perda de performance ao consumir mensagem.
 
 ### Authentication
 
@@ -400,7 +419,7 @@ ACL ( Access Control List ).
 Em construção...
 ```
 
-### Apoio técnico
+>## Apoio técnico
 
 ### Manutenção no cluster
 Você pode reiniciar todos os serviços para aplicar uma alteração de configuração generalizada.
