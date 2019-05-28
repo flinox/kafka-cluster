@@ -50,21 +50,6 @@ Link para o burndown:
 
 - Itens em azul são containers
 
-## Tecnologias
-
-- Python 3.6.7
-- Go 1.12.5
-- Docker 18.09.2
-- Docker-compose 1.17.1
-- Apache Kafka 2.2.0
-- Apache Zookeeper 3.5.5
-- Prometheus JMX Exporter Agent 0.11.0
-- Prometheus 2.9.2
-- Grafana 6.1.6
-- Visual Studio Code
-- Linux Mint 64bits
-- Openssl 1.1.1b
-
 
 ># Como rodar o ambiente
 
@@ -226,6 +211,7 @@ Onde são armazenadas as métricas que são coletadas dos brokers, estes dados s
 
 Foi habilitado SSL Encryption para produzir e consumir mensagens do kafka (1-way):
 ![Security](plano/images/2019-05-25-SSL-encryption.png)
+Fonte: https://courses.datacumulus.com/kafka-security-a42
 
 - Foi simulado um CA privado no kafka_monitoring para assinar os certificados gerados.
 - Gerando um par de chaves, uma chave publica e uma privada, localizada em:
@@ -361,7 +347,7 @@ SSL-Session:
     Extended master secret: yes
 ---
 ```
->## Utilizando o cluster com segurança
+>## Utilizando o cluster (segurança)
 
 
 ### Criar topico security
@@ -405,7 +391,7 @@ docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server 
 
 ### Authentication
 
-Clientes se conectam no kafka cluster de forma segura, provando sua identidade para conectar ao cluster ( SASL - Kerberos ).
+Clientes se conectam no kafka cluster de forma segura, provando sua identidade para conectar ao cluster (SASL - Kerberos).
 
 ```
 Em construção...
@@ -413,7 +399,7 @@ Em construção...
 ### Authorization
 
 Controle de acesso aos tópicos para consumir ou produzir mensagens, 
-ACL ( Access Control List ).
+ACL (Access Control List).
 
 ```
 Em construção...
@@ -493,6 +479,23 @@ kafka-console-producer --broker-list kafka1:9092,kafka2:9093,kafka3:9094 --topic
 ```
 kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delete --topic test-topic
 ```
+
+## Tecnologias utilizadas
+
+- Python 3.6.7
+- Go 1.12.5
+- Docker 18.09.2
+- Docker-compose 1.17.1
+- Apache Kafka 2.2.0
+- Apache Zookeeper 3.5.5
+- Prometheus JMX Exporter Agent 0.11.0
+- Prometheus 2.9.2
+- Grafana 6.1.6
+- Visual Studio Code
+- Linux Mint 64bits
+- Openssl 1.1.1b
+- OpenJDK 13
+
 
 ## Referências
 
