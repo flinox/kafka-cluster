@@ -296,7 +296,7 @@ kafka2              | [2019-05-28 08:17:20,614] INFO [SocketServer brokerId=2] C
 Assim sabemos que as configurações no broker foram aceitas e não temos erros, a seguir realizar uma conexão diretamente na porta segura:
 
 ```
-docker exec -it kafka_client bash -c "openssl s_client -connect kafka1:9093 -msg -cipher 'ALL'"
+docker exec -it kafka_client bash -c "openssl s_client -connect kafka1:9093"
 ```
 
 Resposta esperada, algo como:
@@ -377,14 +377,14 @@ client.id=flinox
 ### Produzindo mensagens na porta segura
 
 ```
-docker exec -it kafka_client bash -c "kafka-console-producer --broker-list kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout 30000 --producer.config /opt/ssl/kafka_client.properties"
+docker exec -it kafka_client bash -c "kafka-console-producer --broker-list kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout 90000 --producer.config /opt/ssl/kafka_client.properties"
 ```
 - Devido a criptografia ocorre perda de performance ao publicar mensagem.
 
 ### Consumindo mensagens da porta segura
 
 ```
-docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout-ms 30000 --consumer.config /opt/ssl/kafka_client.properties --property group.id=flinox --from-beginning"
+docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout-ms 90000 --consumer.config /opt/ssl/kafka_client.properties --property group.id=flinox --from-beginning"
 ```
 
 - Devido a criptografia ocorre perda de performance ao consumir mensagem.
@@ -491,8 +491,8 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 - Prometheus JMX Exporter Agent 0.11.0
 - Prometheus 2.9.2
 - Grafana 6.1.6
-- Visual Studio Code
-- Linux Mint 64bits
+- Visual Studio Code 1.34.0
+- Linux Mint x86_64
 - Openssl 1.1.1b
 - OpenJDK 13
 
