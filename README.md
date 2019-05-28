@@ -13,8 +13,11 @@
 - O esforço foi estimado apenas para as stories principais do sprint, caso sobre tempo puxarei outras stories (*) para não comprometer a entrega.
 
 ### Stories tasks
+21/05
 ![Tasks](/plano/images/2019-05-22-stories-tasks.png)
 
+28/05
+![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
 
 ## Acompanhamento
 
