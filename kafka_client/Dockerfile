@@ -9,7 +9,9 @@ ENV GOPATH /go
 ENV PATH ${PATH}:${GOPATH}/bin:/usr/local/go/bin
 ENV OPENSSL_VERSION=${SSL}
 
-RUN apt-get update && apt-get install -y apt-utils tzdata
+RUN apt-get update && apt-get install -y apt-utils tzdata make gcc
+
+RUN apt-get install -y openjdk-8-jre
 
 RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" >  /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
@@ -17,7 +19,7 @@ RUN apt-get install -y net-tools netcat curl wget apt-transport-https telnet
 
 RUN apt-get install -y git nano python3 jq gnupg2 zip unzip sqlite3 libsqlite3-dev
 
-RUN apt-get install -y default-jre default-jdk make gcc
+#RUN apt-get install -y default-jre default-jdk make gcc
 
 RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
 
@@ -44,18 +46,6 @@ RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old &
 RUN apt-get install -y ca-certificates iputils-ping openssh-server
 # COPY ./ssl/CA/ca-cert /usr/share/ca-certificates/
 # RUN chmod 644 /usr/share/ca-certificates/ca-cert && update-ca-certificates
-
-# wget https://www.openssl.org/source/openssl-1.1.1b.tar.gz -P /tmp
-# tar -xzvf openssl-1.1.1b.tar.gz -C /tmp
-# cd openssl-1.1.1b
-# apt-get install -y perl make gcc
-# ./config
-# make test
-# mv /usr/bin/openssl ~/tmp/openssl_old
-# make install
-# sudo ln -s /usr/local/bin/openssl /usr/bin/openssl
-# ldconfig
-# openssl version
 
 WORKDIR /go
 

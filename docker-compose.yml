@@ -114,9 +114,10 @@ services:
     environment:
       ID: 1
       SERVERPASSWORD: "verysecret"
-      ALLOW_PLAINTEXT_LISTENER: "yes"
+      #ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
+      KAFKA_OFFSETS_RETENTION_MINUTES: 10080      
     # healthcheck:
     #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka1:9092"]
     #     interval: 60s
@@ -152,9 +153,10 @@ services:
     environment:
       ID: 2
       SERVERPASSWORD: "verysecret"
-      ALLOW_PLAINTEXT_LISTENER: "yes" 
+      #ALLOW_PLAINTEXT_LISTENER: "yes" 
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
+      KAFKA_OFFSETS_RETENTION_MINUTES: 10080      
     # healthcheck:
     #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka2:9092"]
     #     interval: 60s
@@ -192,7 +194,7 @@ services:
     environment:
       ID: 3
       SERVERPASSWORD: "verysecret"
-      ALLOW_PLAINTEXT_LISTENER: "yes"
+      #ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
       KAFKA_OFFSETS_RETENTION_MINUTES: 10080

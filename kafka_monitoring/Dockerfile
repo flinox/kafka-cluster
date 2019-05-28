@@ -22,31 +22,33 @@ RUN apt-get update && apt-get install -y apt-utils wget sed net-tools netcat def
 RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" >  /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 # Install prometheus server
-RUN mkdir -p ${PROMETHEUS_HOME} \
-    && wget https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.${ARCHITECTURE}.tar.gz -P ${PROMETHEUS_HOME}
-RUN tar -C ${PROMETHEUS_HOME} -xzvf ${PROMETHEUS_HOME}/prometheus-${PROMETHEUS_VERSION}.${ARCHITECTURE}.tar.gz && rm ${PROMETHEUS_HOME}/prometheus-${PROMETHEUS_VERSION}.${ARCHITECTURE}.tar.gz \
-    && mkdir -p ${PROMETHEUS_HOME}/config && mkdir -p ${PROMETHEUS_HOME}/data
+RUN mkdir -p ${PROMETHEUS_HOME} && \
+    wget https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.${ARCHITECTURE}.tar.gz -P ${PROMETHEUS_HOME}
+
+RUN tar -C ${PROMETHEUS_HOME} -xzvf ${PROMETHEUS_HOME}/prometheus-${PROMETHEUS_VERSION}.${ARCHITECTURE}.tar.gz && rm ${PROMETHEUS_HOME}/prometheus-${PROMETHEUS_VERSION}.${ARCHITECTURE}.tar.gz && \
+    mkdir -p ${PROMETHEUS_HOME}/config && mkdir -p ${PROMETHEUS_HOME}/data
 
 COPY ./prometheus/config/prometheus.yml ${PROMETHEUS_HOME}/config
 
 # Install grafana
-RUN mkdir -p ${GRAFANA_HOME} && mkdir -p ${GRAFANA_HOME}/data \
-    && wget https://dl.grafana.com/oss/release/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz -P ${GRAFANA_HOME}
-RUN tar -C ${GRAFANA_HOME} -zxvf ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz && rm ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz \
-    && mv ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}/* ${GRAFANA_HOME} \
-    && cd ${GRAFANA_HOME} && rm ./grafana-${GRAFANA_VERSION} -R
+RUN mkdir -p ${GRAFANA_HOME} && mkdir -p ${GRAFANA_HOME}/data && \
+    wget https://dl.grafana.com/oss/release/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz -P ${GRAFANA_HOME}
+
+RUN tar -C ${GRAFANA_HOME} -zxvf ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz && rm ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}.${ARCHITECTURE}.tar.gz 
+
+RUN mv ${GRAFANA_HOME}/grafana-${GRAFANA_VERSION}/* ${GRAFANA_HOME} && \
+    cd ${GRAFANA_HOME} && rm ./grafana-${GRAFANA_VERSION} -R
 
 # Install openssl
-RUN apt-get install -y perl make gcc \
-    && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -P /tmp && tar -xzvf /tmp/openssl-${OPENSSL_VERSION}.tar.gz -C /tmp
+RUN apt-get install -y perl make gcc ca-certificates iputils-ping openssh-server && \
+    wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -P /tmp && tar -xzvf /tmp/openssl-${OPENSSL_VERSION}.tar.gz -C /tmp
 
-RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old && ./config && make install \
-    && ln -s /usr/local/bin/openssl /usr/bin/openssl && ldconfig && openssl version
+RUN cd /tmp/openssl-${OPENSSL_VERSION} && mv /usr/bin/openssl /tmp/openssl_old && ./config && make install && \
+    ln -s /usr/local/bin/openssl /usr/bin/openssl && ldconfig && openssl version
 
 COPY ./grafana/conf/defaults.ini ${GRAFANA_HOME}/conf
 
 # Install certificate CA private
-RUN apt-get install -y ca-certificates iputils-ping openssh-server
 # COPY ./ssl/CA/ca-cert /usr/share/ca-certificates/
 # RUN chmod 644 /usr/share/ca-certificates/ca-cert && update-ca-certificates
 
