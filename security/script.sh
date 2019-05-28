@@ -1,7 +1,27 @@
 #!/bin/bash
 
-echo "Generate keystore e cert-file..."
-read -p "Pressione uma tecla para continuar..."
+# Clear old files
+echo ""
+read -p "Todos os certificados serão apagados, Pressione uma tecla para continuar..."
+
+rm -f ./kafka/ssl/kafka1/*
+rm -f ./kafka/ssl/kafka2/*
+rm -f ./kafka/ssl/kafka3/*
+
+rm -f ./kafka_client/ssl/kafka_client.truststore.jks
+rm -f ./kafka_client/ssl/kafka_client.keystore.jks
+
+rm -f ./kafka_client/ssl/kafka_client.truststore.jks
+rm -f ./kafka_client/ssl/kafka_client.keystore.jks
+rm -f ./kafka_client/ssl/ca-cert
+
+rm -f ./kafka_monitoring/ssl/kafka1/*
+rm -f ./kafka_monitoring/ssl/kafka2/*
+rm -f ./kafka_monitoring/ssl/kafka3/*
+rm -f ./kafka_monitoring/ssl/client/*
+
+echo ""
+read -p "Gerar keystore e cert-file, Pressione uma tecla para continuar..."
 docker exec -it kafka1 sh /opt/script/cert-01.sh
 
 sleep 2
@@ -10,30 +30,36 @@ docker exec -it kafka2 sh /opt/script/cert-01.sh
 sleep 2
 docker exec -it kafka3 sh /opt/script/cert-01.sh
 
-echo "Envia cert-file to CA..."
-read -p "Pressione uma tecla para continuar..."
-cp ../kafka/ssl/kafka1/cert-file ../kafka_monitoring/ssl/kafka1/
-cp ../kafka/ssl/kafka2/cert-file ../kafka_monitoring/ssl/kafka2/
-cp ../kafka/ssl/kafka3/cert-file ../kafka_monitoring/ssl/kafka3/
+sleep 2
+docker exec -it kafka_client bash /opt/ssl/script/cert-client-01.sh
 
-echo "Assina o cert-file para gerar o cert-signed..."
-read -p "Pressione uma tecla para continuar..."
-docker exec -it kafka_monitoring bash /opt/ssl/cert-02.sh
+echo ""
+read -p "Envia cert-file to CA, Pressione uma tecla para continuar..."
+cp ./kafka/ssl/kafka1/cert-file ./kafka_monitoring/ssl/kafka1/
+cp ./kafka/ssl/kafka2/cert-file ./kafka_monitoring/ssl/kafka2/
+cp ./kafka/ssl/kafka3/cert-file ./kafka_monitoring/ssl/kafka3/
+cp ./kafka_client/ssl/cert-file ./kafka_monitoring/ssl/client/
 
-echo "Envia cert-signed do CA para os brokers..."
-read -p "Pressione uma tecla para continuar..."
-cp ../kafka_monitoring/ssl/kafka1/cert-signed ../kafka/ssl/kafka1/
-cp ../kafka_monitoring/ssl/kafka2/cert-signed ../kafka/ssl/kafka2/
-cp ../kafka_monitoring/ssl/kafka3/cert-signed ../kafka/ssl/kafka3/
+echo ""
+read -p "Assina o cert-file para gerar o cert-signed, Pressione uma tecla para continuar..."
+docker exec -it kafka_monitoring bash /opt/ssl/script/cert-02.sh
 
-echo "Envia ca-cert chave pública do CA que assinou para os brokers..."
-read -p "Pressione uma tecla para continuar..."
-cp ../kafka_monitoring/ssl/ca-cert ../kafka/ssl/kafka1/
-cp ../kafka_monitoring/ssl/ca-cert ../kafka/ssl/kafka2/
-cp ../kafka_monitoring/ssl/ca-cert ../kafka/ssl/kafka3/
+echo ""
+read -p "Envia cert-signed do CA para os brokers, Pressione uma tecla para continuar..."
+cp ./kafka_monitoring/ssl/kafka1/cert-signed ./kafka/ssl/kafka1/
+cp ./kafka_monitoring/ssl/kafka2/cert-signed ./kafka/ssl/kafka2/
+cp ./kafka_monitoring/ssl/kafka3/cert-signed ./kafka/ssl/kafka3/
+cp ./kafka_monitoring/ssl/client/cert-signed ./kafka_client/ssl/
 
-echo "Importa cert-signed para keystore e gera truststore..."
-read -p "Pressione uma tecla para continuar..."
+echo ""
+read -p "Envia ca-cert chave pública do CA que assinou para os brokers, Pressione uma tecla para continuar..."
+cp ./kafka_monitoring/ssl/ca/ca-cert ./kafka/ssl/kafka1/
+cp ./kafka_monitoring/ssl/ca/ca-cert ./kafka/ssl/kafka2/
+cp ./kafka_monitoring/ssl/ca/ca-cert ./kafka/ssl/kafka3/
+cp ./kafka_monitoring/ssl/ca/ca-cert ./kafka_client/ssl/
+
+echo ""
+read -p "Importa cert-signed para keystore e gera truststore, Pressione uma tecla para continuar..."
 docker exec -it kafka1 sh /opt/script/cert-03.sh
 
 sleep 2
@@ -42,25 +68,14 @@ docker exec -it kafka2 sh /opt/script/cert-03.sh
 sleep 2
 docker exec -it kafka3 sh /opt/script/cert-03.sh
 
-
-echo "Copiar os ca-cert dos broker para os clients..."
-read -p "Pressione uma tecla para continuar..."
-cp ../kafka/ssl/kafka1/ca-cert ../kafka_client/ssl/kafka1/
-cp ../kafka/ssl/kafka2/ca-cert ../kafka_client/ssl/kafka2/
-cp ../kafka/ssl/kafka3/ca-cert ../kafka_client/ssl/kafka3/
-
-cp ../kafka/ssl/kafka1/ca-cert ../kafka_monitoring/ssl/kafka1/
-cp ../kafka/ssl/kafka2/ca-cert ../kafka_monitoring/ssl/kafka2/
-cp ../kafka/ssl/kafka3/ca-cert ../kafka_monitoring/ssl/kafka3/
-
 sleep 2
-docker exec -it kafka_client sh /opt/ssl/script/cert-client.sh
+docker exec -it kafka_client bash /opt/ssl/script/cert-client-03.sh
 
 #echo "Check the content of keystore"
 #docker exec -it kafka_client sh "keytool -list -v -keystore /opt/ssl/kafka_client.truststore.jks"
 
-echo "Testar secutiry..."
-read -p "Pressione uma tecla para continuar..."
-docker exec -it kafka_monitoring bash -c "openssl s_client -debug -connect kafka1:9093 -msg -cipher 'SHA1'"
+# echo ""
+# read -p "Testar secutiry, Pressione uma tecla para continuar..."
+# docker exec -it kafka_monitoring bash -c "openssl s_client -debug -connect kafka1:9093 -msg -cipher 'SHA1'"
 
-echo "Fim."
+# echo "Fim."

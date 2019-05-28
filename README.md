@@ -210,6 +210,13 @@ Foi habilitado SSL Encryption para produzir e consumir mensagens do kafka (1-way
 ```
 - ca-key é a chave privada, nao deve ser compartilhada.
 
+Para criar as chaves foi usado o seguinte comando dentro do kafka_monitoring:
+
+```
+openssl req -new -x509 -keyout ca-key -out ca-cert -days 365
+```
+- Preenche as informações conforme solicitado ( não é obrigatório )
+- Confirme com sim/yes ao final para gerar a ca-key e ca-cert
 
 
 ### Security Script para orquestrar o request, sign e import
@@ -478,3 +485,4 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 - https://github.com/wvanbergen/kafka/consumergroup
 - https://courses.datacumulus.com/kafka-security-a42
 - https://docs.confluent.io/current/tutorials/security_tutorial.html#generating-keys-certs
+- https://www.confluent.io/blog/apache-kafka-security-authorization-authentication-encryption/

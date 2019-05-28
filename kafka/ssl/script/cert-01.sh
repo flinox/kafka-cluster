@@ -6,7 +6,7 @@
 # Gerar um certificado x509 para cada kafka broker ( não assinado )
 # saida: server.keystore.jks
 #keytool -genkey -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias localhost -validity 365 -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -storetype pkcs12
-keytool -genkey -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias $HOSTNAME -validity 365 -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -dname "CN=${HOSTNAME}" -storetype pkcs12
+keytool -genkey -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias $HOSTNAME -validity 365 -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -dname "CN=${HOSTNAME}" -storetype pkcs12 --keyalg RSA
 
 
 
