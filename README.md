@@ -373,7 +373,6 @@ Clientes se conectam no kafka cluster de forma segura, provando sua identidade p
 
 ```
 Em construção...
-
 ```
 ### Authorization
 
@@ -382,7 +381,6 @@ ACL ( Access Control List ).
 
 ```
 Em construção...
-
 ```
 
 ### Apoio técnico
