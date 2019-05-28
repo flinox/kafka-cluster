@@ -15,10 +15,10 @@
 ### Stories tasks
 
 >21/05
-![Tasks](/plano/images/2019-05-22-stories-tasks.png)
+>>![Tasks](/plano/images/2019-05-22-stories-tasks.png)
 
 >28/05
-![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
+>>![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
 
 ## Acompanhamento
 
@@ -26,10 +26,12 @@
 - Burndown planejado:
 
 >21/05
-![Burndown](/plano/images/2019-05-21-burndown.png)
+>>![Burndown](/plano/images/2019-05-21-burndown.png)
+
 
 >28/05
-![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
+>>![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
+
 
 Link para o burndown:
 
