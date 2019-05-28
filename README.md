@@ -229,13 +229,11 @@ Um script foi gerado para facilitar esse processo de geração de certificado e 
 O que o script faz:
 
 - Gerar um certificado x509 para cada kafka broker - Ex.: kafka1.keystore.jks
-- Gerar uma requisicao de certificado (cert-file) em cada broker para que o CA possa assinar
-- Envia o cert-file gerado por cada broker para o CA ( kafka_monitoring )
-- CA Assina cada um dos certificados dos brokers (cert-signed)
-- Envia de volta a chave assinada (cert-signed) e a chave publica (ca-cert) para cada broker
-- Importa o ca-cert e cert-signed para o keystore e trustore
-- Envia o ca-cert para os clients ( kafka_client e kafka_monitoring )
-- Gera um trustore para o client com o ca-cert
+- Gerar uma requisicao de certificado (cert-file) para cada broker e client para que o CA possa assinar
+- Envia o cert-file gerado por cada broker e client para o CA ( kafka_monitoring )
+- CA Assina cada um dos certificados dos brokers e do client (cert-signed)
+- Envia de volta a chave assinada (cert-signed) e a chave publica (ca-cert) para cada broker e client
+- Importa o ca-cert e cert-signed para o keystore e trustore no broker e no client importa também o dos brokers
 
 
 ### Setup do kafka broker para SSL
@@ -464,7 +462,6 @@ kafka-console-producer --broker-list kafka1:9092,kafka2:9093,kafka3:9094 --topic
 ```
 kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delete --topic test-topic
 ```
-
 
 ## Referências
 
