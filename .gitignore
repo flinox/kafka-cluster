@@ -4,7 +4,7 @@ zookeeper/log/*
 __temp/*
 kafka_monitoring/ssl/ca-key
 #kafka/ssl/*
-kafka_client/ssl/*
+#kafka_client/ssl/*
 #kafka_monitoring/grafana/data/*
 kafka_monitoring/prometheus/data/*
 
