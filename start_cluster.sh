@@ -49,7 +49,7 @@ docker build -t flinox/kafka_client ./kafka_client/.
 docker build -t flinox/kafka_monitoring ./kafka_monitoring/.
 
 #export CURRENT_UID=$(id -u):$(id -g)
-export COMPOSE_HTTP_TIMEOUT=300
+export COMPOSE_HTTP_TIMEOUT=30000
 
 docker-compose up -d
 

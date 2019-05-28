@@ -113,16 +113,10 @@ services:
       - "8082:8080"
     environment:
       ID: 1
-      SERVERPASSWORD: "verysecret"
-      #ALLOW_PLAINTEXT_LISTENER: "yes"
+      BROKERPASSWORD: verysecret       
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
-      KAFKA_OFFSETS_RETENTION_MINUTES: 10080      
-    # healthcheck:
-    #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka1:9092"]
-    #     interval: 60s
-    #     timeout: 20s
-    #     retries: 5        
+      KAFKA_OFFSETS_RETENTION_MINUTES: 10080     
     depends_on:
       zookeeper1:
         condition: service_healthy
@@ -152,16 +146,10 @@ services:
       - "8083:8080"      
     environment:
       ID: 2
-      SERVERPASSWORD: "verysecret"
-      #ALLOW_PLAINTEXT_LISTENER: "yes" 
+      BROKERPASSWORD: "verysecret"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
       KAFKA_OFFSETS_RETENTION_MINUTES: 10080      
-    # healthcheck:
-    #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka2:9092"]
-    #     interval: 60s
-    #     timeout: 20s
-    #     retries: 5                
     depends_on:
       zookeeper1:
         condition: service_healthy
@@ -193,45 +181,10 @@ services:
       - "8084:8080"      
     environment:
       ID: 3
-      SERVERPASSWORD: "verysecret"
-      #ALLOW_PLAINTEXT_LISTENER: "yes"
+      BROKERPASSWORD: "verysecret"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
       KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
       KAFKA_OFFSETS_RETENTION_MINUTES: 10080
-      # KAFKA_ADVERTISED_HOST_NAME: 172.20.1.38
-      # LOG4J_LOGGER_KAFKA: "INFO"
-      # LOG4J_LOGGER_ORG_APACHE_KAFKA: "INFO"
-      # LOG4J_LOGGER_ORG_I0ITEC_ZKCLIENT_ZKCLIENT: "INFO"
-      # LOG4J_LOGGER_ORG_APACHE_ZOOKEEPER: "INFO"
-      # # Change to DEBUG or TRACE to enable request logging
-      # LOG4J_LOGGER_KAFKA_REQUEST_LOGGER: "DEBUG, requestAppender"
-      # LOG4J_ADDITIVITY_KAFKA_REQUEST_LOGGER: "true"
-      # #LOG4J_LOGGER_KAFKA_NETWORK_PROCESSOR: "TRACE, requestAppender"
-      # #LOG4J_LOGGER_KAFKA_SERVER_KAFKAAPIS: "TRACE, requestAppender"
-      # #LOG4J_ADDITIVITY_KAFKA_SERVER_KAFKAAPIS: "false"
-      # KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      # KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-      # KAFKA_NUM_IO_THREADS: 16 # 8
-      # KAFKA_NUM_NETWORK_THREADS: 6 # 3
-      # KAFKA_MAX_CONNECTIONS_PER_IP: 10 #
-      # #KAFKA_MAX_CONNECTIONS_PER_IP_OVERRIDES: 172.22.0.1:500,127.0.0.1:200
-      # KAFKA_NUM_PARTITIONS: 5
-      # KAFKA_OFFSETS_RETENTION_MINUTES: 2880
-      # KAFKA_LOG_RETENTION_HOURS: 48
-      # #KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      # #KAFKA_DEFAULT_REPLICATION_FACTOR: 1
-      # #KAFKA_MIN_INSYNC_REPLICAS: 1
-      # #LOG_RETENTION_MINUTES: 5
-      # #LOG_CLEANUP_POLICY: "compact"
-      # #LOG_CLEANER_THREADS: 2
-      # #KAFKA_CREATE_TOPICS: "Topic1:1:3,Topic2:1:1:compact"
-      # #HOSTNAME_COMMAND: "wget -t3 -T2 -qO-  http://169.254.169.254/latest/meta-data/local-ipv4"
-      # #Reference: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
-    # healthcheck:
-    #     test: ["CMD", "bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka3:9092"]
-    #     interval: 60s
-    #     timeout: 20s
-    #     retries: 5            
     depends_on:
       zookeeper1:
         condition: service_healthy
@@ -261,6 +214,8 @@ services:
     ports:
       - "9090:9090"
       - "3000:3000"
+    environment: 
+      CAPASSWORD: "capassword"
     stdin_open: true
     tty: true
     depends_on:
@@ -294,7 +249,8 @@ services:
       KAFKA_TOPIC: "test-topic"
       ZOOKEEPER_HOST: "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
       CONSUMER_GROUP: "flinox"
-      CLIENTPASSWORD: "clientsecretkey"
+      CLIENTPASSWORD: "verysecretclient"
+
     stdin_open: true
     tty: true
     command: /bin/bash -c "sleep infinity"        

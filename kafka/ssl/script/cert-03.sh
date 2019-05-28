@@ -1,17 +1,12 @@
 #!/bin/sh
 
-export BROKERNAME=$HOSTNAME
-export BROKERPASSWORD=verysecret
-export CAPASSWORD=verysecret
-
-
 # 03 - BROKERS - importar o certificado assinado
 
 # BROKER SERVER
 # Importar a chave publica do CA para o truststore
 # entrada: ca-cert
 # saida: server.truststore.jks 
-keytool -keystore /opt/ssl/$BROKERNAME.truststore.jks -alias CARoot -import -file /opt/ssl/ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+keytool -keystore /opt/ssl/$HOSTNAME.truststore.jks -alias CARoot -import -file /opt/ssl/ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
 
 
 # BROKER SERVER
@@ -19,8 +14,8 @@ keytool -keystore /opt/ssl/$BROKERNAME.truststore.jks -alias CARoot -import -fil
 # entrada: ca-cert e cert-signed
 # saida: server.keystore.jks updated
 sleep 3
-keytool -keystore /opt/ssl/$BROKERNAME.keystore.jks -alias CARoot -import -file /opt/ssl/ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias CARoot -import -file /opt/ssl/ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
 
 sleep 3
-keytool -keystore /opt/ssl/$BROKERNAME.keystore.jks -alias localhost -import -file /opt/ssl/cert-signed -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias localhost -import -file /opt/ssl/cert-signed -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
 

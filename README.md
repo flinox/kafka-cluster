@@ -55,7 +55,7 @@ Link para acompanhar em tempo real:
 - Docker-compose 1.17.1
 - Apache Kafka 2.2.0
 - Apache Zookeeper 3.5.5
-- Prometheus JMX Expoeter Agent 0.11.0
+- Prometheus JMX Exporter Agent 0.11.0
 - Prometheus 2.9.2
 - Grafana 6.1.6
 - Visual Studio Code
@@ -77,7 +77,6 @@ Link para acompanhar em tempo real:
 - Irá realizar o build das imagens usadas no cluster;
 - Realizar a criação inicial dos diretorios de armazenamento persistente;
 - Iniciar toda a orquestração para subir o ambiente
-
 
 Todos os dados, logs e configurações estão persistentes e fora dos containers, assim se você parar um container do cluster ou o cluster todo e subir novamente todo o histórico será mantido.
 
@@ -159,7 +158,7 @@ Para acessar o grafana:
 
 
 ## Prometheus
-É onde são armazenadas as métricas que são coletadas dos brokers, estes dados servem de base para o grafana, Acesse o prometheus através do endereço:
+Onde são armazenadas as métricas que são coletadas dos brokers, estes dados servem de base para o grafana, Acesse o prometheus através do endereço:
 [http://localhost:9090](http://localhost:9090)
 ![Prometheus](/plano/images/2019-05-23-prometheus-01.png)
 
@@ -167,7 +166,7 @@ Para acessar o grafana:
 
 >## Aplicações de exemplo
 
-### Producer
+### Producer Application in Go
 ```
 docker exec -it kafka_client go run ./src/app_producer/producer.go
 ```
@@ -180,7 +179,7 @@ Parametros
 - topic (string) - Tópico que deseja produzir as mensagens (default "test-topic")
 - verbose (bool) - Informe se quer log mais verboso
 
-### Consumer
+### Consumer Application in Go
 ```
 docker exec -it kafka_client go run ./src/app_consumer/consumer.go
 ```
@@ -195,218 +194,216 @@ Parametros
 - zookeeper (string) - Lista dos zookeepers (default "zookeeper1:2181,zookeeper2:2181,zookeeper3:2181")
 
 
-
 >## Segurança
 
-## Encryption
+## SSL Encryption
 
-Como a SSL encryption funciona:
+Foi habilitado SSL Encryption para produzir e consumir mensagens do kafka (1-way):
 ![Security](plano/images/2019-05-25-SSL-encryption.png)
 
-- Vamos simular um CA privado no kafka_monitoring para fazer a SSL encryption.
+- Foi simulado um CA privado no kafka_monitoring para assinar os certificados gerados.
+- Gerando um par de chaves, uma chave publica e uma privada, localizada em:
+
+```
+/kafka_monitoring/ssl/ca-cert
+/kafka_monitoring/ssl/ca-key
+```
+- ca-key é a chave privada, nao deve ser compartilhada.
 
 
 
-Sobre os dados trafegando na rede entre clients e brokers
-Encrypt Data ( SSL old version ) TLS ( Transport Layer Security ) new version
-SSL Protocol ( HTTPS )
+### Security Script para orquestrar o request, sign e import
 
-I-way verification ( Exemplo: browser > website ) ( Encryption )
-2-way verification, SSL authentication ( Authentication )
+Um script foi gerado para facilitar esse processo de geração de certificado e assinatura pelo CA privado:
+```
+./security/script.sh
+```
 
-CA ( Certificate Authority ) usamos nossa própria, private
+O que o script faz:
 
-Kafka Server, keystore ( to CA )
-
-SSL Handshake
-
-## Criando o CA
-> kafka_monitoring
-mkdir /opt/ssl
-cd /opt/ssl
-openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka_monitoring" -keyout ca-key -out ca-cert -nodes
-
--- Private key
-ca-key
-
--- Certificate key (public)
-ca-cert
-
-## Criando a keystore for kafka1
-> kafka_monitoring
-export SERVERPASSWORD=password
-cd /opt/ssl
-keytool -genkey -keystore kafka1.keystore.jks -validity 365 -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -dname "CN=kafka1" -storetype pkcs12
-
--- olhar o conteudo
-keytool -list -v -keystore kafka1.keystore.jks
-
--- generate the sign request ( Enviaria o cert-file para o CA e receberia sign version do seu certificado )
-keytool -keystore kafka1.keystore.jks -certreq -file cert-file -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD
-
--- assinando o cert-file nos mesmos pelo nosso CA privado, resultado teremos o cert-signed para o kafka1
-openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:$SERVERPASSWORD
-
--- olhar o conteudo
-keytool -printcert -v -file cert-signed
+- Gerar um certificado x509 para cada kafka broker - Ex.: kafka1.keystore.jks
+- Gerar uma requisicao de certificado (cert-file) em cada broker para que o CA possa assinar
+- Envia o cert-file gerado por cada broker para o CA ( kafka_monitoring )
+- CA Assina cada um dos certificados dos brokers (cert-signed)
+- Envia de volta a chave assinada (cert-signed) e a chave publica (ca-cert) para cada broker
+- Importa o ca-cert e cert-signed para o keystore e trustore
+- Envia o ca-cert para os clients ( kafka_client e kafka_monitoring )
+- Gera um trustore para o client com o ca-cert
 
 
-## Criando a truststore for kafka1
-> kafka_monitoring
-export SERVERPASSWORD=password
-keytool -keystore kafka1.truststore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
+### Setup do kafka broker para SSL
 
--- import ca-cert to the keystore
-keytool -keystore kafka1.keystore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
-
--- import cert-signed to thekeystore
-keytool -keystore kafka1.keystore.jks -import -file cert-signed -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
-
-
-
-
-## Configurando o broker kafka para SSL 
-copiar os arquivos kafka1*.* para o kafka1 broker pasta /opt/ssl
-
-Alterar o arquivo server.properties conforme exemplo:
+Deve alterar as propriedades abaixo no arquivo server.properties, exemplo do broker kafka1:
 
 ```
 listeners=PLAINTEXT://0.0.0.0:9092,SSL://0.0.0.0:9093
-
-# Hostname and port the broker will advertise to producers and consumers. If not set, 
-# it uses the value for "listeners" if configured.  Otherwise, it will use the value
-# returned from java.net.InetAddress.getCanonicalHostName().
 advertised.listeners=PLAINTEXT://kafka1:9092,SSL://kafka1:9093
-
-ssl.keystore.location=/opt/ssl/kafka1.keystore.jks
-ssl.keystore.password=password
-ssl.key.password=password
-ssl.truststore.location=/opt/ssl/kafka1.truststore.jks
-ssl.truststore.password=password
+ssl.keystore.location=/opt/ssl/kafka1.server.keystore.jks
+ssl.keystore.password=verysecret
+ssl.key.password=verysecret
+ssl.truststore.location=/opt/ssl/kafka.server.truststore.jks
+ssl.truststore.password=verysecret
+ssl.protocol=TLS
+ssl.keymanager.algorithm=SunX509
+ssl.cipher.suites=
+ssl.endpoint.identification.algorithm=None
+ssl.enabled.protocols=TLSv1.2,TLSv1.1,TLSv1
+ssl.keystore.type=JKS
+ssl.truststore.type=JKS
+#ssl.secure.random.implementation=SHA1PRNG
+ssl.client.auth=none
 ```
 
-
-## Clients
-copiar ca-cert e cert-signed voce pode distribuir publicamente para os clients
-
-
-
-## Ajustando horario dos servidores para Brasil Sao Paulo
-ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
-
-### Script para criar CA, gerar keystore e truststore para os outros brokers
+- Para fins do case, deixamos o modo PLAINTEXT ainda habilitado nos listeners, mas o correto seria agora remover deixando apenas o SSL, então ficaria:
 
 ```
-## CA
-mkdir -p /opt/ssl
-cd /opt/ssl
-openssl req -new -newkey rsa:4096 -days 365 -x509 -subj "/CN=kafka_monitoring" -keyout ca-key -out ca-cert -nodes
-
-## Criando a keystore for broker
-export SERVERPASSWORD=verysecret
-export BROKERNAME=kafka3
-
-cd /opt/ssl
-
-## Deletando arquivos antigos
-rm cert-file
-rm cert-signed
-rm ca-cert.srl
-
-keytool -genkey -keystore $BROKERNAME.keystore.jks -validity 365 -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -dname "CN=${BROKERNAME}" -storetype pkcs12
-
-sleep 4
-## generate the sign request ( Enviaria o cert-file para o CA e receberia sign version do seu certificado )
-keytool -keystore $BROKERNAME.keystore.jks -certreq -file cert-file -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD
-
-sleep 4
-## assinando o cert-file nos mesmos pelo nosso CA privado, resultado teremos o cert-signed para o kafkaX
-openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:$SERVERPASSWORD
-
-## Criando a truststore for $BROKERNAME
-sleep 4
-keytool -keystore $BROKERNAME.truststore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
-
-## import ca-cert to the keystore
-sleep 4
-keytool -keystore $BROKERNAME.keystore.jks -alias CARoot -import -file ca-cert -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
-
-## import cert-signed to thekeystore
-sleep 4
-keytool -keystore $BROKERNAME.keystore.jks -import -file cert-signed -storepass $SERVERPASSWORD -keypass $SERVERPASSWORD -noprompt
-
+listeners=SSL://0.0.0.0:9093
+advertised.listeners=SSL://kafka1:9093
 ```
 
-## Para saber se carregou corretamente o nosso kafka1 com as alteracoes no server.properties, consulte no server.log do broker
+### Validar o Encrypt SSL
+
+Verificar no log do broker, consultar se está dando algum erro e para saber se deu certo, consulte o log por EndPoint:
 
 ```
 docker-compose logs kafka1 | grep "EndPoint"
-#ou
-#grep "EndPoint" /logs/server.log
 ```
 
-## Para saber se a porta SSL 9093 está acessível, rode:
-
+Conteúdo esperado no log, algo parecido como:
 ```
-openssl s_client -connect kafka1:9093 -state -debug
-
-openssl s_client -connect kafka1:9093 -CApath /etc/ssl/certs
-
-openssl s_client -connect kafka1:9093 -msg -cipher 'ALL'
-
-openssl s_client -connect kafka1:9093 -msg -cipher 'SSLv3'
-
-openssl s_client -connect kafka1:9093 -msg -cipher 'SHA1'
+...
+kafka2              | [2019-05-28 08:17:20,614] INFO [SocketServer brokerId=2] Created data-plane acceptor and processors for endpoint : EndPoint(0.0.0.0,9093,ListenerName(SSL),SSL) (kafka.network.SocketServer)
+...
 ```
 
-
-## Kafka_Client configuration
-export CLIENTPASSWORD=clientsecretkey
-export CLIENTNAME=kafka_client
-cd /opt/ssl
-
-<copy ca-cert to this folder>
-
-keytool -keystore $CLIENTNAME.truststore.jks -alias CARoot -import -file ca-cert -storepass $CLIENTPASSWORD -keypass $CLIENTPASSWORD -noprompt
-
-<create a client.properties>
-
-## Kafka_client produce message via SSL port
+Assim sabemos que as configurações no broker foram aceitas e não temos erros, a seguir realizar uma conexão diretamente na porta segura:
 
 ```
-kafka-console-producer --broker-list kafka1:9093,kafka2:9093,kafka3:9093 --topic test-topic --timeout 30000 --property "client.id=flinox" --producer.config /opt/ssl/client.properties
+docker exec -it kafka_client bash -c "openssl s_client -connect kafka1:9093 -msg -cipher 'ALL'"
 ```
 
-## Kafka_client consume message via SSL port
+Resposta esperada, algo como:
 ```
-kafka-console-consumer --bootstrap-server kafka1:9092,kafka2:9093,kafka3:9094 \
---topic test-topic \
---timeout-ms 30000 \
---property group.id=flinox \
---from-beginning
---consumer.config /opt/ssl/client.properties
+CONNECTED(00000003)
+>>> ??? [length 0005]
+    16 03 01 01 80
+>>> TLS 1.3, Handshake [length 0180], ClientHello
+    01 00 01 7c 03 03 db 01 1e 93 b1 43 1c 63 00 52
+    10 ee 2e 58 ee 95 25 ab 9a bc d4 70 9c 62 3d 1a
+...
+Certificate chain
+ 0 s:C = Unknown, ST = Unknown, L = Unknown, O = Unknown, OU = Unknown, CN = Flinox
+   i:C = BR, ST = Some-State, O = Internet Widgits Pty Ltd
+ 1 s:C = BR, ST = Some-State, O = Internet Widgits Pty Ltd
+   i:C = BR, ST = Some-State, O = Internet Widgits Pty Ltd
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIFVzCCBD8CFEnxD7hG3E8KoMwLCsM2tcBmwHWCMA0GCSqGSIb3DQEBCwUAMEUx
+CzAJBgNVBAYTAkJSMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRl
+...
+Peer signing digest: SHA224
+Peer signature type: DSA
+Server Temp Key: DH, 1024 bits
+---
+SSL handshake has read 2741 bytes and written 579 bytes
+Verification error: self signed certificate in certificate chain
+---
+New, TLSv1.2, Cipher is DHE-DSS-AES256-GCM-SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : DHE-DSS-AES256-GCM-SHA384
+    Session-ID: BDC56CFE0B20DAC8F0B41E0CFDS5533E2775D386080D3980F06EF0A8C47814
+    Session-ID-ctx: 
+    Master-Key: 63A37404D3FB36FA9DA261DC214B7SDSFS43227C14F407BD65BCF04E55708DB6414131580EFA2B3A3E863A7091D2
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    Start Time: 1559050854
+    Timeout   : 7200 (sec)
+    Verify return code: 19 (self signed certificate in certificate chain)
+    Extended master secret: yes
+---
 ```
 
 
-
-## Authentication
-Clients connect on Kafka Cluster
-Client prove their identity to connect on Cluster
-SASL ( Kerberos ) Auth
-
-## Authorisation
-Publicar e consumir de um topico
-ACL ( Access Control List )
+### Criar topico security
+```
+docker exec -it kafka_client bash -c "kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --create --topic secure-topic --partitions 3 --replication-factor 3"
+```
 
 
+Para produzir e consumir mensagens na porta segura, é preciso criar um arquivo de configuração para o client, o nosso foi já foi criado durante a criação do script de geração do certificado, o conteúdo do arquivo seria algo assim:
+
+Arquivo:
+```
+/opt/ssl/kafka_client.properties
+```
+
+Conteúdo:
+```
+security.protocol=SSL
+ssl.truststore.location=/opt/ssl/kafka_client.truststore.jks
+ssl.truststore.password=verysecretclient
+client.id=flinox
+```
+
+### Produzindo mensagens na porta segura
+
+```
+docker exec -it kafka_client bash -c "kafka-console-producer --broker-list kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout 30000 --producer.config /opt/ssl/kafka_client.properties"
+```
 
 
+### Consumindo mensagens da porta segura
+
+```
+docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server kafka1:9093,kafka2:9093,kafka3:9093 --topic secure-topic --timeout-ms 30000 --consumer.config /opt/ssl/kafka_client.properties --property group.id=flinox --from-beginning"
+```
 
 
-## SSH
-ssh -i keypair.pem usuario@hostname.com
+### Authentication
 
-## Apoio técnico
+Clientes se conectam no kafka cluster de forma segura, provando sua identidade para conectar ao cluster ( SASL - Kerberos ).
+
+```
+Em construção...
+
+```
+### Authorization
+
+Controle de acesso aos tópicos para consumir ou produzir mensagens, 
+ACL ( Access Control List ).
+
+```
+Em construção...
+
+```
+
+### Apoio técnico
+
+### Manutenção no cluster
+Você pode reiniciar todos os serviços para aplicar uma alteração de configuração generalizada.
+```
+./restart_cluster.sh
+```
+O que basicamente equivale a um docker-compose restart
+
+Caso seja alguma alteração pontual em um serviço específico, você pode restartar apenas aquele serviço, usando o comando:
+```
+docker-compose restart <servico>
+```
+
+Para parar o ambiente por completo.
+```
+./stop_cluster.sh
+```
+O que basicamente equivale a docker-compose down
 
 ### Caso queira realizar o build manual das imagens
 ```
@@ -468,18 +465,16 @@ kafka-topics --zookeeper zookeeper1:2181,zookeeper2:2181,zookeeper3:2181 --delet
 
 - https://github.com/flinox/kafka_cluster
 - https://github.com/flinox/kafka_utils
-- https://www.confluent.io/
 - https://kafka.apache.org/documentation/
-- https://docs.confluent.io/current/kafka/monitoring.html
 - https://zookeeper.apache.org/
+- https://www.confluent.io/
+- https://docs.confluent.io/current/kafka/monitoring.html
 - https://www.rbco.com.br/graficos-e-indicadores/grafico-burn-down-e-burn-up
 - https://courses.datacumulus.com/kafka-monitoring-b88
 - https://github.com/prometheus/jmx_exporter
 - https://github.com/prometheus/prometheus
 - https://grafana.com/
 - https://www.udemy.com/user/stephane-maarek/
-
-
 - https://medium.com/rahasak/kafka-producer-with-golang-fab7348a5f9a
 - https://medium.com/rahasak/kafka-consumer-with-golang-a93db6131ac2
 - https://github.com/wvanbergen/kafka/consumergroup
