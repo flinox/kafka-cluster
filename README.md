@@ -13,10 +13,11 @@
 - O esforço foi estimado apenas para as stories principais do sprint, caso sobre tempo puxarei outras stories (*) para não comprometer a entrega.
 
 ### Stories tasks
-21/05
+
+>21/05
 ![Tasks](/plano/images/2019-05-22-stories-tasks.png)
 
-28/05
+>28/05
 ![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
 
 ## Acompanhamento
@@ -24,13 +25,13 @@
 - Capacity: 40 pontos para sprint de 1 semana.
 - Burndown planejado:
 
-21/05
+>21/05
 ![Burndown](/plano/images/2019-05-21-burndown.png)
 
-28/05
+>28/05
 ![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
 
-Link para acompanhar em tempo real:
+Link para o burndown:
 
 > [Burndown](https://docs.google.com/spreadsheets/d/1on_Sd3mgyJTbZywISEAddIVEQWIgD7vHJqxPstqXXao/edit?usp=sharing)
 
