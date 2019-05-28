@@ -21,8 +21,11 @@
 - Capacity: 40 pontos para sprint de 1 semana.
 - Burndown planejado:
 
+21/05
 ![Burndown](/plano/images/2019-05-21-burndown.png)
 
+28/05
+![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
 
 Link para acompanhar em tempo real:
 
@@ -43,7 +46,7 @@ Link para acompanhar em tempo real:
 - Rodando em notebook pessoal com Linux Mint 64bits.
 
 ### Diagrama de implementação
-![Diagrama de Implementacao](/plano/images/2019-05-22-diagrama-implementacao.png)
+![Diagrama de Implementacao](/plano/images/2019-05-28-diagrama-implementacao.png)
 
 - Itens em azul são containers
 
