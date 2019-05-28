@@ -10,10 +10,12 @@ rm -f ./kafka/ssl/kafka3/*
 
 rm -f ./kafka_client/ssl/kafka_client.truststore.jks
 rm -f ./kafka_client/ssl/kafka_client.keystore.jks
-
-rm -f ./kafka_client/ssl/kafka_client.truststore.jks
-rm -f ./kafka_client/ssl/kafka_client.keystore.jks
 rm -f ./kafka_client/ssl/ca-cert
+rm -f ./kafka_client/ssl/cert-file
+rm -f ./kafka_client/ssl/cert-signed
+rm -f ./kafka_client/ssl/kafka1/*
+rm -f ./kafka_client/ssl/kafka2/*
+rm -f ./kafka_client/ssl/kafka3/*
 
 rm -f ./kafka_monitoring/ssl/kafka1/*
 rm -f ./kafka_monitoring/ssl/kafka2/*
@@ -50,6 +52,10 @@ cp ./kafka_monitoring/ssl/kafka1/cert-signed ./kafka/ssl/kafka1/
 cp ./kafka_monitoring/ssl/kafka2/cert-signed ./kafka/ssl/kafka2/
 cp ./kafka_monitoring/ssl/kafka3/cert-signed ./kafka/ssl/kafka3/
 cp ./kafka_monitoring/ssl/client/cert-signed ./kafka_client/ssl/
+
+cp ./kafka_monitoring/ssl/kafka1/cert-signed ./kafka_client/ssl/kafka1/
+cp ./kafka_monitoring/ssl/kafka2/cert-signed ./kafka_client/ssl/kafka2/
+cp ./kafka_monitoring/ssl/kafka3/cert-signed ./kafka_client/ssl/kafka3/
 
 echo ""
 read -p "Envia ca-cert chave pública do CA que assinou para os brokers, Pressione uma tecla para continuar..."

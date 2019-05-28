@@ -16,6 +16,8 @@ keytool -keystore /opt/ssl/$HOSTNAME.truststore.jks -alias CARoot -import -file 
 sleep 3
 keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias CARoot -import -file /opt/ssl/ca-cert -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
 
+# localhost
 sleep 3
-keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias localhost -import -file /opt/ssl/cert-signed -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias $HOSTNAME -import -file /opt/ssl/cert-signed -storepass $BROKERPASSWORD -keypass $BROKERPASSWORD -noprompt
+
 

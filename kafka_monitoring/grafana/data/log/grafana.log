@@ -1932,3 +1932,35 @@ t=2019-05-28T14:38:30-0300 lvl=info msg="Initializing NotificationService" logge
 t=2019-05-28T14:38:30-0300 lvl=info msg="Initializing provisioningServiceImpl" logger=server
 t=2019-05-28T14:38:30-0300 lvl=info msg="Initializing Stream Manager"
 t=2019-05-28T14:38:30-0300 lvl=info msg="HTTP Server Listen" logger=http.server address=0.0.0.0:3000 protocol=http subUrl= socket=
+t=2019-05-28T15:04:13-0300 lvl=info msg="Starting Grafana" logger=server version=6.2.0 commit=5d16da7 branch=HEAD compiled=2019-05-22T07:28:56-0300
+t=2019-05-28T15:04:13-0300 lvl=info msg="Config loaded from" logger=settings file=/opt/grafana/conf/defaults.ini
+t=2019-05-28T15:04:13-0300 lvl=info msg="Path Home" logger=settings path=/opt/grafana
+t=2019-05-28T15:04:13-0300 lvl=info msg="Path Data" logger=settings path=/opt/grafana/data
+t=2019-05-28T15:04:13-0300 lvl=info msg="Path Logs" logger=settings path=/opt/grafana/data/log
+t=2019-05-28T15:04:13-0300 lvl=info msg="Path Plugins" logger=settings path=/opt/grafana/data/plugins
+t=2019-05-28T15:04:13-0300 lvl=info msg="Path Provisioning" logger=settings path=/opt/grafana/conf/provisioning
+t=2019-05-28T15:04:13-0300 lvl=info msg="App mode production" logger=settings
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing SqlStore" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Connecting to DB" logger=sqlstore dbtype=sqlite3
+t=2019-05-28T15:04:13-0300 lvl=info msg="Starting DB migration" logger=migrator
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing HTTPServer" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing InternalMetricsService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing RemoteCache" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing QuotaService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing LoginService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing PluginManager" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Starting plugin search" logger=plugins
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing RenderingService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing AlertingService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing DatasourceCacheService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing HooksService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing SearchService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing ServerLockService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing TracingService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing UsageStatsService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing UserAuthTokenService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing CleanUpService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing NotificationService" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing provisioningServiceImpl" logger=server
+t=2019-05-28T15:04:13-0300 lvl=info msg="Initializing Stream Manager"
+t=2019-05-28T15:04:13-0300 lvl=info msg="HTTP Server Listen" logger=http.server address=0.0.0.0:3000 protocol=http subUrl= socket=

@@ -19,3 +19,14 @@ keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias CARoot -import -file /o
 sleep 3
 keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias $HOSTNAME -import -file /opt/ssl/cert-signed -storepass $CLIENTPASSWORD -keypass $CLIENTPASSWORD -noprompt
 
+
+
+# IMPORT DO CERT-SIGNED DOS BROKERS
+sleep 3
+keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias kafka1 -import -file /opt/ssl/kafka1/cert-signed -storepass $CLIENTPASSWORD -keypass $CLIENTPASSWORD -noprompt
+
+sleep 3
+keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias kafka2 -import -file /opt/ssl/kafka2/cert-signed -storepass $CLIENTPASSWORD -keypass $CLIENTPASSWORD -noprompt
+
+sleep 3
+keytool -keystore /opt/ssl/$HOSTNAME.keystore.jks -alias kafka3 -import -file /opt/ssl/kafka3/cert-signed -storepass $CLIENTPASSWORD -keypass $CLIENTPASSWORD -noprompt
