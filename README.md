@@ -1,6 +1,6 @@
 
 # A kafka use case
-
+Por [Fernando Lino](https://www.linkedin.com/in/flinox/)
 
 ## Planejamento
 
