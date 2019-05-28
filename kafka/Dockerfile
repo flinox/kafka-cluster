@@ -1,6 +1,5 @@
 ## KAFKA ##
 
-#FROM openjdk:8u201-jre-alpine
 FROM openjdk:13-alpine
 
 ARG KFV=2.2.0
@@ -25,8 +24,6 @@ ENV KAFKA_HOME=${KFH} \
     USER=kafka \
     UID=1000 \
     GID=1000
-    #CLASSPATH=${KFH}-${KFV}/lib:${KFH}-${KFV}:/usr/lib/jvm/java-1.8-openjdk/jre \
-
 
 # Create group and user
 RUN addgroup -S -g ${UID} ${USER} \ 
@@ -66,11 +63,6 @@ RUN chown ${USER}:${GID} ${KAFKA_DATA} \
     && chown -h ${USER}:${GID} ${KAFKA_HOME} \
     && chown ${USER}:${GID} -R ${KAFKA_LOG} \
     && chown ${USER}:${GID} -R ${PROMETHEUS_HOME}
-
-# Install certificate CA private
-# RUN apk add --no-cache ca-certificates iputils openssh 
-# COPY ./ssl/CA/ca-cert /usr/share/ca-certificates/
-# RUN chmod 644 /usr/share/ca-certificates/ca-cert && update-ca-certificates
 
 USER ${USER}
 

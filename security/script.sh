@@ -77,11 +77,4 @@ docker exec -it kafka3 sh /opt/script/cert-03.sh
 sleep 2
 docker exec -it kafka_client bash /opt/ssl/script/cert-client-03.sh
 
-#echo "Check the content of keystore"
-#docker exec -it kafka_client sh "keytool -list -v -keystore /opt/ssl/kafka_client.truststore.jks"
-
-# echo ""
-# read -p "Testar secutiry, Pressione uma tecla para continuar..."
-# docker exec -it kafka_monitoring bash -c "openssl s_client -debug -connect kafka1:9093 -msg -cipher 'SHA1'"
-
-# echo "Fim."
+echo "Fim."
