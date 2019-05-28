@@ -243,10 +243,10 @@ Deve alterar as propriedades abaixo no arquivo server.properties, exemplo do bro
 ```
 listeners=PLAINTEXT://0.0.0.0:9092,SSL://0.0.0.0:9093
 advertised.listeners=PLAINTEXT://kafka1:9092,SSL://kafka1:9093
-ssl.keystore.location=/opt/ssl/kafka1.server.keystore.jks
+ssl.keystore.location=/opt/ssl/kafka1.keystore.jks
 ssl.keystore.password=verysecret
 ssl.key.password=verysecret
-ssl.truststore.location=/opt/ssl/kafka.server.truststore.jks
+ssl.truststore.location=/opt/ssl/kafka1.truststore.jks
 ssl.truststore.password=verysecret
 ssl.protocol=TLS
 ssl.keymanager.algorithm=SunX509
@@ -259,7 +259,7 @@ ssl.truststore.type=JKS
 ssl.client.auth=none
 ```
 
-- Para fins do case, deixamos o modo PLAINTEXT ainda habilitado nos listeners, mas o correto seria agora remover deixando apenas o SSL, então ficaria:
+- Para fins do case, deixamos o modo PLAINTEXT ainda habilitado nos listeners, mas o correto seria agora remover deixando apenas o SSL para cada server.properties, exemplo kafka1:
 
 ```
 listeners=SSL://0.0.0.0:9093
@@ -355,6 +355,9 @@ Conteúdo:
 security.protocol=SSL
 ssl.truststore.location=/opt/ssl/kafka_client.truststore.jks
 ssl.truststore.password=verysecretclient
+ssl.keystore.location=/opt/ssl/kafka_client.keystore.jks
+ssl.keystore.password=verysecretclient
+ssl.key.password=verysecretclient
 client.id=flinox
 ```
 
