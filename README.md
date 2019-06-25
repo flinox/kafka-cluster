@@ -17,7 +17,6 @@ Por [Flinox - Fernando Lino](https://www.linkedin.com/in/flinox/)
 - Um container com uma imagem de kafka como client e ferramentas necessárias para desenvolvimento do producer e consumer;
 - Um container com prometheus para coletar as métricas e grafana para monitoração;
 - Tudo orquestrado por um docker-compose que iniciará os serviços;
-- Rodando em notebook pessoal com Linux Mint 64bits.
 
 ### Diagrama de implementação
 ![Diagrama de Implementacao](/plano/images/2019-05-28-diagrama-implementacao.png)
@@ -119,7 +118,7 @@ docker exec -it kafka_client bash -c "kafka-console-consumer --bootstrap-server 
 ```
 
 
->## Aplicações de exemplo
+>## Aplicações de exemplo em Go
 
 ### Producer Application in Go
 ```
