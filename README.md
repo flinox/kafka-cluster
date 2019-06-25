@@ -1,36 +1,10 @@
 
 # A kafka use case
-Por [Fernando Lino](https://www.linkedin.com/in/flinox/)
+Um Cluster kafka e zookeeper com 3 nodes, um client para monitoramento prometheus e grafana e um kafka para ser usado como client.
 
-## Planejamento
+Espero ajudar !! qualquer problema ou sugestão de melhoria por favor me informe.
 
-### Stories
-- Classifiquei os itens do case como stories, os priorizei de acordo com suas dependências e estimei esforço com planning poker usando fibonacci:
-
-![Stories](/plano/images/2019-05-21-stories.png)
-
-- (*) são stories desejadas/diferenciais.
-- O esforço foi estimado apenas para as stories principais do sprint, caso sobre tempo puxarei outras stories (*) para não comprometer a entrega.
-
-- Capacity: 40 pontos para sprint de 1 semana.
-
-### Planejado
-
->21/05
->>![Tasks](/plano/images/2019-05-22-stories-tasks.png)
->>![Burndown](/plano/images/2019-05-21-burndown.png)
-
-
-### Realizado
-
->28/05
->>![Tasks Done](plano/images/2019-05-22-stories-tasks-done.png)
->>![Burndown Final](/plano/images/2019-05-28-burndown-final.png)
-
-Link para o burndown:
-
-> [Burndown](https://docs.google.com/spreadsheets/d/1on_Sd3mgyJTbZywISEAddIVEQWIgD7vHJqxPstqXXao/edit?usp=sharing)
-
+Por [Flinox - Fernando Lino](https://www.linkedin.com/in/flinox/)
 
 ## Arquitetura proposta
 
