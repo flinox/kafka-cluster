@@ -22,7 +22,7 @@ ENV ZOOKEEPER_HOME=${ZKH} \
     CLASSPATH=${ZKH}-${ZKV}/lib:${ZKH}-${ZKV}:/opt/openjdk-13/lib \
     USER=zookeeper \
     UID=1000 \
-    GID=1000
+    GID=1000 
     #CLASSPATH=${ZKH}-${ZKV}/lib:${ZKH}-${ZKV}:/usr/lib/jvm/java-1.8-openjdk/jre \
 
 # Create group and user
@@ -72,3 +72,4 @@ EXPOSE 2888-3888
 EXPOSE 8080
 
 CMD sh -c "./start.sh"
+#CMD sh -c "sleep 1d"

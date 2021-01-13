@@ -26,12 +26,38 @@ else
 fi
 
 sleep 5
-echo ">>> Starting zookeeper $ID ..."
-bin/zkServer.sh start $ZOOCFG & 
-pid="$!"
+#echo ">>> Starting zookeeper $ID ..."
+#bin/zkServer.sh start $ZOOCFG & 
+#pid="$!"
 
-trap 'term_handler' SIGHUP SIGINT SIGTERM
+#trap 'term_handler' SIGHUP SIGINT SIGTERM
+
+#sleep 5
+#tail -f $ZOO_LOG_DIR/zookeeper*.out & wait
+
+while true; do 
+
+  echo ">>> Trying to start zookeeper $ID ..."
+  bin/zkServer.sh start $ZOOCFG & 
+  pid="$!"
+
+  if [ -z "$pid" ]
+  then
+        echo ">>> Waiting for another zookeeper instances!"
+        sleep 15
+        #trap 'term_handler' SIGHUP SIGINT SIGTERM
+  else
+        echo ">>> Zookeeper $ID started!"
+        break
+  fi
+
+done
 
 sleep 5
+tail -f $ZOO_LOG_DIR/zookeeper*.out & wait
 
-tail -f $ZOO_LOG_DIR/zookeeper.out & wait
+
+
+
+
+

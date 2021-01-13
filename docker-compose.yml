@@ -115,7 +115,7 @@ services:
       ID: 1
       BROKERPASSWORD: verysecret       
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
-      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.14.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
       KAFKA_OFFSETS_RETENTION_MINUTES: 10080     
     depends_on:
       zookeeper1:
@@ -148,7 +148,7 @@ services:
       ID: 2
       BROKERPASSWORD: "verysecret"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M" 
-      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.14.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"     
       KAFKA_OFFSETS_RETENTION_MINUTES: 10080      
     depends_on:
       zookeeper1:
@@ -183,7 +183,7 @@ services:
       ID: 3
       BROKERPASSWORD: "verysecret"
       KAFKA_HEAP_OPTS: "-Xmx1024M -Xms1024M"
-      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
+      KAFKA_OPTS: "-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.14.0.jar=8080:/opt/prometheus/kafka-2_0_0.yml"
       KAFKA_OFFSETS_RETENTION_MINUTES: 10080
     depends_on:
       zookeeper1:
