@@ -3,8 +3,8 @@
 #FROM openjdk:8u201-jre-alpine
 FROM openjdk:13-alpine
 
-ARG ZKV=3.4.14
-ARG PRV=0.11.0
+ARG ZKV=3.6.2
+ARG PRV=0.14.0
 ARG ZKH=/opt/zookeeper
 ARG ZKL=/opt/zookeeper/log
 ARG ZKD=/data/zookeeper
@@ -34,18 +34,18 @@ RUN addgroup -S -g ${UID} ${USER} \
      && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Install aplications needed
-RUN apk add --no-cache bash curl jq nano sudo openrc acl openssl tzdata
-RUN wget http://ftp.unicamp.br/pub/apache/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz -P /tmp/
+RUN apk add --no-cache bash curl jq nano sudo openrc acl openssl tzdata tar
+RUN wget https://downloads.apache.org/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -P /tmp/
 
 # Adjusting timezone
 RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" >  /etc/timezone && date
 
 # Extract zookeeper 
-RUN tar -xzf /tmp/zookeeper-${ZOOKEEPER_VERSION}.tar.gz -C /opt && \
-    rm /tmp/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
+RUN tar -xvzf /tmp/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz -C /opt && \
+    rm /tmp/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz
 
 # Create log e data folder
-RUN ln -s ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} ${ZOOKEEPER_HOME} && \
+RUN ln -s /opt/apache-zookeeper-${ZOOKEEPER_VERSION}-bin ${ZOOKEEPER_HOME} && \
     mkdir -p ${ZOOKEEPER_DATA} && mkdir -p ${ZOO_LOG_DIR}
 
 # Download prometheus jmx export agent
@@ -60,7 +60,7 @@ COPY start.sh ${ZOOKEEPER_HOME}/
 
 # Setting owners
 RUN chown ${UID}:${GID} ${ZOOKEEPER_DATA} \
-    && chown ${UID}:${GID} -R ${ZOOKEEPER_HOME}-${ZOOKEEPER_VERSION} \
+    && chown ${UID}:${GID} -R /opt/apache-zookeeper-${ZOOKEEPER_VERSION}-bin \
     && chown -h ${UID}:${GID} ${ZOOKEEPER_HOME} \
     && chown ${UID}:${GID} -R ${ZOO_LOG_DIR} \
     && chown ${UID}:${GID} -R ${PROMETHEUS_HOME}    

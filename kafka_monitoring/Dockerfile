@@ -2,8 +2,8 @@
 
 FROM ubuntu:latest
 
-ARG PRV=2.9.2
-ARG GRV=6.2.0
+ARG PRV=2.24.0
+ARG GRV=7.3.6
 ARG SSL=1.1.1b
 ARG ARC=linux-amd64
 ARG PRH=/opt/prometheus

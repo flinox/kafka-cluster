@@ -2,9 +2,9 @@
 
 FROM openjdk:13-alpine
 
-ARG KFV=2.2.0
-ARG SCV=2.12
-ARG PRV=0.11.0
+ARG KFV=2.7.0
+ARG SCV=2.13
+ARG PRV=0.14.0
 ARG KFH=/opt/kafka
 ARG KFL=/opt/kafka/logs
 ARG KFD=/data/kafka
